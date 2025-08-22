@@ -9,5 +9,5 @@ public class AddRequestDTO {
     private String title;
     private String content;
 
-    private UUID userId;
+    // private UUID userId;
 }
