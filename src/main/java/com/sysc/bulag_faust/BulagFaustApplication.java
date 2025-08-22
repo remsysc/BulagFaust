@@ -6,11 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BulagFaustApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BulagFaustApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(BulagFaustApplication.class, args);
         //TODO: CREATE ENTITIES, REPOSITORIES, SERVICES, CONTROLLERS
-
-
-        }
-
+    }
 }
