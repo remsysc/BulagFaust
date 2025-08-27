@@ -1,8 +1,8 @@
-package com.sysc.bulag_faust.post.service;
+package com.sysc.bulag_faust.post.service.post;
 
-import com.sysc.bulag_faust.post.dto.PostDTO;
-import com.sysc.bulag_faust.post.dto.request.AddRequestDTO;
-import com.sysc.bulag_faust.post.dto.request.UpdateRequestDTO;
+import com.sysc.bulag_faust.post.dto.post.AddPostRequest;
+import com.sysc.bulag_faust.post.dto.post.PostResponse;
+import com.sysc.bulag_faust.post.dto.post.UpdatePostRequest;
 import com.sysc.bulag_faust.post.entities.Post;
 import com.sysc.bulag_faust.post.entities.Status;
 import com.sysc.bulag_faust.post.exception.UserNotFoundException;
@@ -10,7 +10,6 @@ import com.sysc.bulag_faust.post.mapper.PostMapper;
 import com.sysc.bulag_faust.post.repository.PostRepository;
 import com.sysc.bulag_faust.user.entities.User;
 import com.sysc.bulag_faust.user.repository.UserRepository;
-import com.sysc.bulag_faust.user.service.IUserService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +24,10 @@ public class PostService implements IPostService {
     // private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final PostRepository postRepository;
-    private final IUserService userService;
     private final UserRepository userRepository;
 
     @Override
-    public PostDTO addPost(AddRequestDTO addRequestDTO) {
+    public PostResponse addPost(AddPostRequest addRequestDTO) {
         if (addRequestDTO == null) {
             throw new NullPointerException();
         }
@@ -47,7 +45,7 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public PostDTO updatePost(UpdateRequestDTO request) {
+    public PostResponse updatePost(UpdatePostRequest request) {
         Post post = getPostEntityById(request.getId());
         post.setContent(request.getContent());
         post.setTitle(request.getTitle());
@@ -72,18 +70,18 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public List<PostDTO> getAllPostsByUser(UUID userId) {
+    public List<PostResponse> getAllPostsByUser(UUID userId) {
         List<Post> post = postRepository.findAllByUser_Id(userId);
         return postMapper.toListDTO(post);
     }
 
     @Override
-    public List<PostDTO> getAllPosts() {
+    public List<PostResponse> getAllPosts() {
         return postMapper.toListDTO(postRepository.findAll());
     }
 
     @Override
-    public List<PostDTO> getPostsByStatus(Status status) {
+    public List<PostResponse> getPostsByStatus(Status status) {
         List<Post> post = postRepository.findAllByStatus(status);
 
         return postMapper.toListDTO(post); // Replace with actual implementation

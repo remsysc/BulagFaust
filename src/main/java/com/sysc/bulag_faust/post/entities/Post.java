@@ -34,7 +34,6 @@ public class Post {
 
     private String title;
     private String content;
-
     private Status status;
 
     private LocalDateTime createdAt;
@@ -46,7 +45,7 @@ public class Post {
     private Category category;
 
     @PrePersist
-    public void onCreate() {
+    protected void onCreate() {
         this.createdAt = java.time.LocalDateTime.now();
         this.setStatus(Status.DRAFT);
     }

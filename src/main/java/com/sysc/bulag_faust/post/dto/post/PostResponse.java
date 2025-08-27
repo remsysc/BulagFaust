@@ -1,11 +1,11 @@
-package com.sysc.bulag_faust.post.dto;
+package com.sysc.bulag_faust.post.dto.post;
 
 import java.util.Date;
 import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class PostDTO {
+public class PostResponse {
 
     private UUID id;
     private String title;
