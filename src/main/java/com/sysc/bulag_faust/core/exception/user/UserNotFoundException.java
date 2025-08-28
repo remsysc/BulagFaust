@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.post.exception;
+package com.sysc.bulag_faust.core.exception.user;
 
 import com.sysc.bulag_faust.core.exception.NotFoundException;
 

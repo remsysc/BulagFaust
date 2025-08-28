@@ -1,6 +1,7 @@
 package com.sysc.bulag_faust.post.entities;
 
 import com.sysc.bulag_faust.user.entities.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,10 +35,16 @@ public class Post {
 
     private String title;
     private String content;
+
+    @Column(nullable = false)
     private Status status;
 
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
+
+    @Column(updatable = false)
     private LocalDateTime publishedAt;
 
     @ManyToOne
@@ -48,5 +55,6 @@ public class Post {
     protected void onCreate() {
         this.createdAt = java.time.LocalDateTime.now();
         this.setStatus(Status.DRAFT);
+        if (id == null) id = UUID.randomUUID();
     }
 }

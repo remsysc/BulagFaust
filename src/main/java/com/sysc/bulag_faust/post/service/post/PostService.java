@@ -1,11 +1,11 @@
 package com.sysc.bulag_faust.post.service.post;
 
+import com.sysc.bulag_faust.core.exception.user.UserNotFoundException;
 import com.sysc.bulag_faust.post.dto.post.AddPostRequest;
 import com.sysc.bulag_faust.post.dto.post.PostResponse;
 import com.sysc.bulag_faust.post.dto.post.UpdatePostRequest;
 import com.sysc.bulag_faust.post.entities.Post;
 import com.sysc.bulag_faust.post.entities.Status;
-import com.sysc.bulag_faust.post.exception.UserNotFoundException;
 import com.sysc.bulag_faust.post.mapper.PostMapper;
 import com.sysc.bulag_faust.post.repository.PostRepository;
 import com.sysc.bulag_faust.user.entities.User;

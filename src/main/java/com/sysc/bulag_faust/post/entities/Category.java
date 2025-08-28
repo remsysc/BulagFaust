@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.util.List;
 import java.util.UUID;
@@ -32,4 +33,13 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Post> posts;
+
+    @PrePersist
+    protected void onCreate() {
+        if (id == null) id = UUID.randomUUID();
+    }
+
+    public Category(String name) {
+        this.name = name;
+    }
 }
