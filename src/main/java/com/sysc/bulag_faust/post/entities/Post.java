@@ -51,6 +51,10 @@ public class Post {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "tag_id")
+    private Tag tag;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = java.time.LocalDateTime.now();

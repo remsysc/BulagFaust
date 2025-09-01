@@ -3,7 +3,7 @@ package com.sysc.bulag_faust.post.controllers;
 import com.sysc.bulag_faust.core.response.ApiResponse;
 import com.sysc.bulag_faust.post.dto.category.AddCategoryRequest;
 import com.sysc.bulag_faust.post.dto.category.CategoryResponse;
-import com.sysc.bulag_faust.post.service.category.CategoryInterface;
+import com.sysc.bulag_faust.post.service.category.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("${api.prefix}/category")
 public class CategoryController {
 
-    private final CategoryInterface categoryInterface;
+    private final CategoryService categoryService;
 
     @GetMapping
     ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategory() {
-        List<CategoryResponse> category = categoryInterface.getAllCategory();
+        List<CategoryResponse> category = categoryService.getAllCategory();
 
         return ResponseEntity.status(HttpStatus.OK).body(
             ApiResponse.success("Success", category)
@@ -36,7 +36,7 @@ public class CategoryController {
     ResponseEntity<ApiResponse<CategoryResponse>> addCategory(
         @Valid AddCategoryRequest request
     ) {
-        CategoryResponse categoryResponse = categoryInterface.addCategory(
+        CategoryResponse categoryResponse = categoryService.addCategory(
             request
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(

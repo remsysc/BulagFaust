@@ -8,8 +8,8 @@ public class BulagFaustApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BulagFaustApplication.class, args);
-        //TODO: CREATE ENTITIES, REPOSITORIES, SERVICES, CONTROLLERS
-        //TODO: categories services, controllers etc
+        // TODO: CREATE ENTITIES, REPOSITORIES, SERVICES, CONTROLLERS
+        // TODO: categories services, controllers etc
         // FIXME: post.setUser(user);
     }
 }

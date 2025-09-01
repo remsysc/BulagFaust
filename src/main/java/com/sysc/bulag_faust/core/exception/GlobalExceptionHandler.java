@@ -2,6 +2,7 @@ package com.sysc.bulag_faust.core.exception;
 
 import com.sysc.bulag_faust.core.exception.post.CategoryAlreadyExist;
 import com.sysc.bulag_faust.core.exception.post.CategoryNotFound;
+import com.sysc.bulag_faust.core.exception.tag.TagAlreadyExist;
 import com.sysc.bulag_faust.core.exception.user.UserNotFoundException;
 import com.sysc.bulag_faust.core.response.ApiResponse;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,14 @@ public class GlobalExceptionHandler {
     public ApiResponse<Void> handleCategoryAlreadyExist(
         CategoryAlreadyExist e
     ) {
+        return ApiResponse.error(e.getMessage());
+    }
+
+    // Tag
+    //
+    @ExceptionHandler(TagAlreadyExist.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiResponse<Void> handleTagAlreadyExist(TagAlreadyExist e) {
         return ApiResponse.error(e.getMessage());
     }
 }
