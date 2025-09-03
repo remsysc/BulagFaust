@@ -1,6 +1,7 @@
 package com.sysc.bulag_faust.post.service.tag;
 
 import com.sysc.bulag_faust.core.exception.tag.TagAlreadyExist;
+import com.sysc.bulag_faust.core.exception.tag.TagNotFound;
 import com.sysc.bulag_faust.post.dto.tag.AddTagRequest;
 import com.sysc.bulag_faust.post.dto.tag.TagResponse;
 import com.sysc.bulag_faust.post.dto.tag.UpdateTagRequest;
@@ -34,17 +35,30 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagResponse updateTag(UpdateTagRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(
-            "Unimplemented method 'updateTag'"
-        );
+        //check valid id
+        Tag tag = getTagEntityById(request.getId());
+        //check existing name for conflict
+        if (tagRepository.findByName(request.getName()) != null) {
+            throw new TagAlreadyExist(request.getName());
+        }
+
+        tag.setName(request.getName());
+        return tagMapper.toDTO(tagRepository.save(tag));
+    }
+
+    @Override
+    public Tag getTagEntityById(UUID id) {
+        Tag tag = tagRepository
+            .findById(id)
+            .orElseThrow(() -> new TagNotFound(id.toString()));
+        return tag;
     }
 
     @Override
     public TagResponse getTagById(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(
-            "Unimplemented method 'getTagById'"
-        );
+        Tag tag = tagRepository
+            .findById(id)
+            .orElseThrow(() -> new TagNotFound(id.toString()));
+        return tagMapper.toDTO(tag);
     }
 }
