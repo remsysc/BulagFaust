@@ -117,7 +117,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID authorId) {
-        List<Post> posts = postRepository.findByAuthorId(authorId);
+        List<Post> posts = postRepository.findAllByAuthorId(authorId);
         return postMapper.toListDTO(posts);
     }
 }
