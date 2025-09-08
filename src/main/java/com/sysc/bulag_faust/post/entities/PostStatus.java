@@ -1,6 +1,6 @@
 package com.sysc.bulag_faust.post.entities;
 
-public enum Status {
+public enum PostStatus {
     DRAFT,
     PUBLISHED,
     ARCHIVED,

@@ -5,7 +5,7 @@ import com.sysc.bulag_faust.post.dto.post.AddPostRequest;
 import com.sysc.bulag_faust.post.dto.post.PostResponse;
 import com.sysc.bulag_faust.post.dto.post.UpdatePostRequest;
 import com.sysc.bulag_faust.post.entities.Post;
-import com.sysc.bulag_faust.post.entities.Status;
+import com.sysc.bulag_faust.post.entities.PostStatus;
 import com.sysc.bulag_faust.post.mapper.PostMapper;
 import com.sysc.bulag_faust.post.repository.PostRepository;
 import com.sysc.bulag_faust.user.entities.User;
@@ -38,7 +38,7 @@ public class PostServiceImpl implements PostService {
         //post.setUser(userService.getUserEntityById(addRequestDTO.getUserId())); //FIXME
         User user = new User();
         userRepository.save(user);
-        post.setUser(user);
+        post.setAuthor(user);
         postRepository.save(post);
 
         return postMapper.toDTO(post); // Replace with actual implementation
@@ -81,7 +81,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getPostsByStatus(Status status) {
+    public List<PostResponse> getPostsByStatus(PostStatus status) {
         List<Post> post = postRepository.findAllByStatus(status);
 
         return postMapper.toListDTO(post); // Replace with actual implementation

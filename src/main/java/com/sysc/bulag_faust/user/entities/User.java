@@ -11,6 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -43,15 +44,18 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(
-        mappedBy = "user",
+        mappedBy = "author",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    List<Post> posts;
+    List<Post> posts = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
