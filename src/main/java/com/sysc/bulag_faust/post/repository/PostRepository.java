@@ -11,20 +11,23 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, UUID> {
+    // Without eager loading
     List<Post> findAllByStatus(PostStatus status);
 
+    // With eager loading - different method name
     @EntityGraph(value = "graph.PostAuthor")
-    List<Post> findAllByStatusWithAuthors(PostStatus status);
+    List<Post> findByStatus(PostStatus status);
 
-    @EntityGraph(value = "graph.PostAuthor")
-    List<Post> findAll();
-
-    @EntityGraph(value = "graph.PostAuthor")
-    List<Post> findAllPublishedPosts();
-
-    @EntityGraph(value = "graph.PostAuthor")
+    // Without eager loading
     List<Post> findAllByAuthorId(UUID authorId);
 
+    // With eager loading
     @EntityGraph(value = "graph.PostAuthor")
-    Optional<Post> findByIdWithAuthor(UUID postID);
+    List<Post> findByAuthorId(UUID authorId);
+
+    @EntityGraph(value = "graph.PostAuthor")
+    Optional<Post> findPostById(UUID id);
+
+    // @EntityGraph(value = "graph.PostAuthor")
+    // List<Post> findAllPost();
 }

@@ -108,7 +108,7 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostResponse getPostWithAuthor(UUID postId) {
         Post post = postRepository
-            .findByIdWithAuthor(postId)
+            .findPostById(postId)
             .orElseThrow(() -> new UserNotFoundException("Post not found"));
 
         return postMapper.toDTO(post);
@@ -117,7 +117,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID authorId) {
-        List<Post> posts = postRepository.findAllByAuthorId(authorId);
+        List<Post> posts = postRepository.findByAuthorId(authorId);
         return postMapper.toListDTO(posts);
     }
 }
