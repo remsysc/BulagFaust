@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PostService {
-    PostResponse addPost(AddPostRequest addRequestDTO);
+    PostResponse addPost(AddPostRequest addRequestDTO, UUID userId);
     PostResponse updatePost(UpdatePostRequest request);
     Post getPostEntityById(UUID id);
     void deletePost(UUID id);
-    List<PostResponse> getAllPostsByUser(UUID userId);
+    List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID userId);
     List<PostResponse> getAllPosts();
     List<PostResponse> getPostsByStatus(PostStatus status);
+    List<PostResponse> getAllPostWithAuthors();
+    PostResponse getPostWithAuthor(UUID id);
 }

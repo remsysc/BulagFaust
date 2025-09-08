@@ -16,4 +16,7 @@ public class PostResponse {
     private Date createdAt;
     private Date updatedAt;
     private Date publishedAt;
+
+    private String authorName;
+    private String categoryName;
 }

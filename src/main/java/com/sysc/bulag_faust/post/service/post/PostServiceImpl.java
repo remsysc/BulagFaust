@@ -9,12 +9,13 @@ import com.sysc.bulag_faust.post.entities.PostStatus;
 import com.sysc.bulag_faust.post.mapper.PostMapper;
 import com.sysc.bulag_faust.post.repository.PostRepository;
 import com.sysc.bulag_faust.user.entities.User;
-import com.sysc.bulag_faust.user.repository.UserRepository;
+import com.sysc.bulag_faust.user.service.UserServiceImpl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,25 +25,33 @@ public class PostServiceImpl implements PostService {
     // private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
+    private final UserServiceImpl userService;
 
     @Override
-    public PostResponse addPost(AddPostRequest addRequestDTO) {
+    public PostResponse addPost(
+        AddPostRequest addRequestDTO,
+        UUID currentUserId
+    ) {
         if (addRequestDTO == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException("Post request cannot be null");
         }
+        //temp fix
+        User author = userService.getUserEntityById(currentUserId);
 
         Post post = new Post();
         post.setTitle(addRequestDTO.getTitle());
         post.setContent(addRequestDTO.getContent());
-        //post.setUser(userService.getUserEntityById(addRequestDTO.getUserId())); //FIXME
-        User user = new User();
-        userRepository.save(user);
-        post.setAuthor(user);
-        postRepository.save(post);
+        post.setAuthor(author);
 
-        return postMapper.toDTO(post); // Replace with actual implementation
+        return postMapper.toDTO(postRepository.save(post)); // Replace with actual implementation
     }
+
+    // private User getCurrentAuthenticatedUser(){
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     String username = authentication.getName();
+    //     return userService.getUserByUsername(username);
+    // }
 
     @Override
     public PostResponse updatePost(UpdatePostRequest request) {
@@ -69,21 +78,50 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(getPostEntityById(id));
     }
 
-    @Override
-    public List<PostResponse> getAllPostsByUser(UUID userId) {
-        List<Post> post = postRepository.findAllByUser_Id(userId);
-        return postMapper.toListDTO(post);
-    }
-
-    @Override
-    public List<PostResponse> getAllPosts() {
-        return postMapper.toListDTO(postRepository.findAll());
-    }
+    //n+1 problem
+    // @Override
+    // public List<PostResponse> getAllPostsByAuthor(UUID userId) {
+    //     List<Post> post = postRepository.findAllByAuthor_Id(userId);
+    //     return postMapper.toListDTO(post);
+    // }
 
     @Override
     public List<PostResponse> getPostsByStatus(PostStatus status) {
         List<Post> post = postRepository.findAllByStatus(status);
 
         return postMapper.toListDTO(post); // Replace with actual implementation
+    }
+
+    @Override
+    //method that need author data
+    public List<PostResponse> getAllPostWithAuthors() {
+        //custom query to avoid N+1 problems
+        List<Post> posts = postRepository.findAllWithAuthors();
+        return postMapper.toListDTO(posts);
+    }
+
+    @Override
+    //method that dont need author data
+    public List<PostResponse> getAllPosts() {
+        return postMapper.toListDTO(postRepository.findAll());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostResponse getPostWithAuthor(UUID postId) {
+        Post post = getPostEntityById(postId);
+
+        @SuppressWarnings("unused")
+        //access author within transaction to trigger lazy loading
+        String authorName = post.getAuthor() != null
+            ? post.getAuthor().getName()
+            : "Unknown Author";
+        return postMapper.toDTO(post);
+    }
+
+    @Override
+    public List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID userId) {
+        List<Post> posts = postRepository.findAllByAuthorIdWithAuthor(userId);
+        return postMapper.toListDTO(posts);
     }
 }

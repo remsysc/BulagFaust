@@ -33,11 +33,13 @@ public class PostControllers {
         );
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<List<PostResponse>>> getPostByUser(
-        @Valid @PathVariable UUID userId
+    @GetMapping("/{authorId}")
+    public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPostsByUser(
+        @Valid @PathVariable UUID authorId
     ) {
-        List<PostResponse> post = postService.getAllPostsByUser(userId);
+        List<PostResponse> post = postService.getAllPostsByAuthorIdWithAuthor(
+            authorId
+        );
         return ResponseEntity.status(HttpStatus.OK).body(
             ApiResponse.success("Get all post by user is successful: ", post)
         );
@@ -45,9 +47,10 @@ public class PostControllers {
 
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> createPost(
-        @Valid AddPostRequest request
+        @Valid AddPostRequest request,
+        @Valid @PathVariable UUID authorId
     ) {
-        PostResponse postDTO = postService.addPost(request);
+        PostResponse postDTO = postService.addPost(request, authorId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
             ApiResponse.success("Post created: ", postDTO)
         );

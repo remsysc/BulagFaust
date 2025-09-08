@@ -5,11 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,8 +33,8 @@ public class Tag {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "tag")
-    private List<Post> post;
+    @ManyToMany(mappedBy = "tags")
+    private Set<Post> post = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

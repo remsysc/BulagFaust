@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,7 +34,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
