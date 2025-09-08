@@ -50,7 +50,7 @@ public class Category {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Category category = (Category) obj;
-        return id != null && id.equals(category.id);
+        return Objects.equals(id, category.getId());
     }
 
     @Override

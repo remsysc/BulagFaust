@@ -48,8 +48,10 @@ public class Tag {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Tag tag)) return false;
-        return id != null && id.equals(tag.getId());
+        if (o == null || getClass() !=  o.getClass()) return  false;
+
+        Tag tag = (Tag) o;
+        return Objects.equals(id, tag.getId());
     }
 
     @Override

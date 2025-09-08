@@ -13,18 +13,18 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, UUID> {
     List<Post> findAllByStatus(PostStatus status);
 
-    @EntityGraph(attributePaths = { "author" })
+    @EntityGraph(value = "graph.PostAuthor")
     List<Post> findAllByStatusWithAuthors(PostStatus status);
 
-    @EntityGraph(attributePaths = { "author" })
+    @EntityGraph(value = "graph.PostAuthor")
     List<Post> findAll();
 
-    @EntityGraph(attributePaths = { "author" })
+    @EntityGraph(value = "graph.PostAuthor")
     List<Post> findAllPublishedPosts();
 
-    @EntityGraph(attributePaths = { "author" })
+    @EntityGraph(value = "graph.PostAuthor")
     List<Post> findAllByAuthorId(UUID authorId);
 
-    @EntityGraph(attributePaths = { "author" })
+    @EntityGraph(value = "graph.PostAuthor")
     Optional<Post> findByIdWithAuthor(UUID postID);
 }

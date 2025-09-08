@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostServiceImpl implements PostService {
 
     // Assuming you have a repository to handle database operations
@@ -67,6 +68,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Post getPostEntityById(UUID id) {
         return postRepository
             .findById(id)
@@ -88,6 +90,7 @@ public class PostServiceImpl implements PostService {
     // }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PostResponse> getPostsByStatus(PostStatus status) {
         List<Post> post = postRepository.findAllByStatus(status);
 
@@ -95,6 +98,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     //method that dont need author data
     public List<PostResponse> getAllPosts() {
         return postMapper.toListDTO(postRepository.findAll());
@@ -103,17 +107,15 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public PostResponse getPostWithAuthor(UUID postId) {
-        Post post = getPostEntityById(postId);
+        Post post = postRepository
+            .findByIdWithAuthor(postId)
+            .orElseThrow(() -> new UserNotFoundException("Post not found"));
 
-        @SuppressWarnings("unused")
-        //access author within transaction to trigger lazy loading
-        String authorName = post.getAuthor() != null
-            ? post.getAuthor().getName()
-            : "Unknown Author";
         return postMapper.toDTO(post);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID authorId) {
         List<Post> posts = postRepository.findAllByAuthorId(authorId);
         return postMapper.toListDTO(posts);

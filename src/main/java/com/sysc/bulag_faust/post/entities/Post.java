@@ -13,6 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -31,6 +33,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@NamedEntityGraph(
+    name = "graph.PostAuthor",
+    attributeNodes = @NamedAttributeNode("author")
+)
+//use sub graphs if needed
 @Table(name = "posts")
 public class Post {
 
@@ -67,7 +74,8 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
+    
+    //needs to be set<> to avoid multiple bag exception via hibernate cause of EntityGraph
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "post_tags",
@@ -95,7 +103,7 @@ public class Post {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return id != null && id.equals(post.id);
+        return Objects.equals(id, post.getId());
     }
 
     @Override
