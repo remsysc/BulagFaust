@@ -5,27 +5,26 @@ import com.sysc.bulag_faust.post.entities.PostStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, UUID> {
     List<Post> findAllByStatus(PostStatus status);
 
-    @Query("SELECT p FROM Post p JOIN FETCH p.author WHERE p.status = :status")
+    @EntityGraph(attributePaths = { "author" })
     List<Post> findAllByStatusWithAuthors(PostStatus status);
 
-    @Query("SELECT p FROM Post p JOIN FETCH p.author")
-    List<Post> findAllWithAuthors();
+    @EntityGraph(attributePaths = { "author" })
+    List<Post> findAll();
 
-    @Query("SELECT p FROM Post p WHERE p.status = 'PUBLISHED' ")
+    @EntityGraph(attributePaths = { "author" })
     List<Post> findAllPublishedPosts();
 
-    @Query("SELECT p FROM Post p JOIN FETCH p.author WHERE p.id = :id")
-    List<Post> findAllByAuthorIdWithAuthor(UUID userId);
+    @EntityGraph(attributePaths = { "author" })
+    List<Post> findAllByAuthorId(UUID authorId);
 
-    // @Query("SELECT p FROM POST p JOIN FETCH p.author WHERE p.id = :id")
-    // Post findIdWithAuthor(UUID id);
+    @EntityGraph(attributePaths = { "author" })
+    Optional<Post> findByIdWithAuthor(UUID postID);
 }

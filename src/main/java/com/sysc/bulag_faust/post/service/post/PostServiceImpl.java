@@ -28,6 +28,8 @@ public class PostServiceImpl implements PostService {
     //private final UserRepository userRepository;
     private final UserServiceImpl userService;
 
+    //all post methods always with author
+
     @Override
     public PostResponse addPost(
         AddPostRequest addRequestDTO,
@@ -93,14 +95,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    //method that need author data
-    public List<PostResponse> getAllPostWithAuthors() {
-        //custom query to avoid N+1 problems
-        List<Post> posts = postRepository.findAllWithAuthors();
-        return postMapper.toListDTO(posts);
-    }
-
-    @Override
     //method that dont need author data
     public List<PostResponse> getAllPosts() {
         return postMapper.toListDTO(postRepository.findAll());
@@ -120,8 +114,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID userId) {
-        List<Post> posts = postRepository.findAllByAuthorIdWithAuthor(userId);
+    public List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID authorId) {
+        List<Post> posts = postRepository.findAllByAuthorId(authorId);
         return postMapper.toListDTO(posts);
     }
 }

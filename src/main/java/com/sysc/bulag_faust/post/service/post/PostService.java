@@ -16,6 +16,5 @@ public interface PostService {
     List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID userId);
     List<PostResponse> getAllPosts();
     List<PostResponse> getPostsByStatus(PostStatus status);
-    List<PostResponse> getAllPostWithAuthors();
     PostResponse getPostWithAuthor(UUID id);
 }
