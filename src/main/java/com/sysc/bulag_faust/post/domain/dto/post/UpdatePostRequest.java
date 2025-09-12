@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.post.dto.post;
+package com.sysc.bulag_faust.post.domain.dto.post;
 
 import java.util.UUID;
 import lombok.Data;

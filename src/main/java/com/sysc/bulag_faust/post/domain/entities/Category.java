@@ -1,29 +1,35 @@
-package com.sysc.bulag_faust.post.entities;
+package com.sysc.bulag_faust.post.domain.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "tags")
-public class Tag {
+@Table(name = "categories")
+@NamedEntityGraph(
+    name = "graph.CategoryPost",
+    attributeNodes = @NamedAttributeNode("posts")
+)
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,25 +39,24 @@ public class Tag {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
-    private Set<Post> post = new HashSet<>();
+    @OneToMany(mappedBy = "category")
+    private List<Post> posts = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
         if (id == null) id = UUID.randomUUID();
     }
 
-    public Tag(String name) {
+    public Category(String name) {
         this.name = name;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() !=  o.getClass()) return  false;
-
-        Tag tag = (Tag) o;
-        return Objects.equals(id, tag.getId());
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Category category = (Category) obj;
+        return Objects.equals(id, category.getId());
     }
 
     @Override

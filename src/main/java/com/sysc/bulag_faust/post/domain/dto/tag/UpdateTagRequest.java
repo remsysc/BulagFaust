@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.post.dto.tag;
+package com.sysc.bulag_faust.post.domain.dto.tag;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

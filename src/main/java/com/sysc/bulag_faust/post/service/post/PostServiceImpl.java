@@ -1,12 +1,12 @@
 package com.sysc.bulag_faust.post.service.post;
 
 import com.sysc.bulag_faust.core.exception.user.UserNotFoundException;
-import com.sysc.bulag_faust.post.dto.post.AddPostRequest;
-import com.sysc.bulag_faust.post.dto.post.PostResponse;
-import com.sysc.bulag_faust.post.dto.post.UpdatePostRequest;
-import com.sysc.bulag_faust.post.entities.Post;
-import com.sysc.bulag_faust.post.entities.PostStatus;
-import com.sysc.bulag_faust.post.mapper.PostMapper;
+import com.sysc.bulag_faust.post.domain.dto.post.CreatePostRequest;
+import com.sysc.bulag_faust.post.domain.dto.post.PostResponse;
+import com.sysc.bulag_faust.post.domain.dto.post.UpdatePostRequest;
+import com.sysc.bulag_faust.post.domain.entities.Post;
+import com.sysc.bulag_faust.post.domain.entities.PostStatus;
+import com.sysc.bulag_faust.post.domain.mapper.PostMapper;
 import com.sysc.bulag_faust.post.repository.PostRepository;
 import com.sysc.bulag_faust.user.entities.User;
 import com.sysc.bulag_faust.user.service.UserServiceImpl;
@@ -19,21 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class PostServiceImpl implements PostService {
 
-    // Assuming you have a repository to handle database operations
-    // private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final PostRepository postRepository;
-    //private final UserRepository userRepository;
     private final UserServiceImpl userService;
 
-    //all post methods always with author
-
     @Override
-    public PostResponse addPost(
-        AddPostRequest addRequestDTO,
+    @Transactional
+    public PostResponse createPost(
+        CreatePostRequest addRequestDTO,
         UUID currentUserId
     ) {
         if (addRequestDTO == null) {
@@ -57,6 +53,7 @@ public class PostServiceImpl implements PostService {
     // }
 
     @Override
+    @Transactional
     public PostResponse updatePost(UpdatePostRequest request) {
         Post post = getPostEntityById(request.getId());
         post.setContent(request.getContent());
@@ -68,7 +65,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Post getPostEntityById(UUID id) {
         return postRepository
             .findById(id)
@@ -76,21 +72,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public void deletePost(UUID id) {
         //TODO: must be deleted by auth user
 
         postRepository.delete(getPostEntityById(id));
     }
 
-    //n+1 problem
-    // @Override
-    // public List<PostResponse> getAllPostsByAuthor(UUID userId) {
-    //     List<Post> post = postRepository.findAllByAuthor_Id(userId);
-    //     return postMapper.toListDTO(post);
-    // }
-
     @Override
-    @Transactional(readOnly = true)
     public List<PostResponse> getPostsByStatus(PostStatus status) {
         List<Post> post = postRepository.findAllByStatus(status);
 
@@ -99,14 +88,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    //method that dont need author data
     public List<PostResponse> getAllPosts() {
         return postMapper.toListDTO(postRepository.findAll());
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public PostResponse getPostWithAuthor(UUID postId) {
+    public PostResponse getPostWithAuthorId(UUID postId) {
         Post post = postRepository
             .findPostById(postId)
             .orElseThrow(() -> new UserNotFoundException("Post not found"));
@@ -115,8 +102,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<PostResponse> getAllPostsByAuthorIdWithAuthor(UUID authorId) {
+    public List<PostResponse> getAllPostsByAuthorId(UUID authorId) {
         List<Post> posts = postRepository.findAllByAuthorId(authorId);
         return postMapper.toListDTO(posts);
     }

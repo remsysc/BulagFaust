@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.post.entities;
+package com.sysc.bulag_faust.post.domain.entities;
 
 public enum PostStatus {
     DRAFT,

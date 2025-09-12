@@ -1,8 +1,8 @@
 package com.sysc.bulag_faust.post.controllers;
 
 import com.sysc.bulag_faust.core.response.ApiResponse;
-import com.sysc.bulag_faust.post.dto.post.AddPostRequest;
-import com.sysc.bulag_faust.post.dto.post.PostResponse;
+import com.sysc.bulag_faust.post.domain.dto.post.CreatePostRequest;
+import com.sysc.bulag_faust.post.domain.dto.post.PostResponse;
 import com.sysc.bulag_faust.post.service.post.PostService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -37,9 +37,7 @@ public class PostControllers {
     public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPostsByUser(
         @Valid @PathVariable UUID authorId
     ) {
-        List<PostResponse> post = postService.getAllPostsByAuthorIdWithAuthor(
-            authorId
-        );
+        List<PostResponse> post = postService.getAllPostsByAuthorId(authorId);
         return ResponseEntity.status(HttpStatus.OK).body(
             ApiResponse.success("Get all post by user is successful: ", post)
         );
@@ -47,10 +45,10 @@ public class PostControllers {
 
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> createPost(
-        @Valid AddPostRequest request,
+        @Valid CreatePostRequest request,
         @Valid @PathVariable UUID authorId
     ) {
-        PostResponse postDTO = postService.addPost(request, authorId);
+        PostResponse postDTO = postService.createPost(request, authorId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
             ApiResponse.success("Post created: ", postDTO)
         );

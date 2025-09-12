@@ -1,9 +1,9 @@
 package com.sysc.bulag_faust.post.controllers;
 
 import com.sysc.bulag_faust.core.response.ApiResponse;
-import com.sysc.bulag_faust.post.dto.tag.AddTagRequest;
-import com.sysc.bulag_faust.post.dto.tag.TagResponse;
-import com.sysc.bulag_faust.post.dto.tag.UpdateTagRequest;
+import com.sysc.bulag_faust.post.domain.dto.tag.AddTagRequest;
+import com.sysc.bulag_faust.post.domain.dto.tag.TagResponse;
+import com.sysc.bulag_faust.post.domain.dto.tag.UpdateTagRequest;
 import com.sysc.bulag_faust.post.service.tag.TagService;
 import jakarta.validation.Valid;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.post.dto.category;
+package com.sysc.bulag_faust.post.domain.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.UUID;

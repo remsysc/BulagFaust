@@ -1,8 +1,8 @@
 package com.sysc.bulag_faust.post.controllers;
 
 import com.sysc.bulag_faust.core.response.ApiResponse;
-import com.sysc.bulag_faust.post.dto.category.AddCategoryRequest;
-import com.sysc.bulag_faust.post.dto.category.CategoryResponse;
+import com.sysc.bulag_faust.post.domain.dto.category.CategoryResponse;
+import com.sysc.bulag_faust.post.domain.dto.category.CreateCategoryRequest;
 import com.sysc.bulag_faust.post.service.category.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -24,8 +24,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategory() {
-        List<CategoryResponse> category = categoryService.getAllCategory();
+    ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
+        List<CategoryResponse> category = categoryService.getAllCategories();
 
         return ResponseEntity.status(HttpStatus.OK).body(
             ApiResponse.success("Success", category)
@@ -33,10 +33,10 @@ public class CategoryController {
     }
 
     @PostMapping
-    ResponseEntity<ApiResponse<CategoryResponse>> addCategory(
-        @Valid AddCategoryRequest request
+    ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
+        @Valid CreateCategoryRequest request
     ) {
-        CategoryResponse categoryResponse = categoryService.addCategory(
+        CategoryResponse categoryResponse = categoryService.createCategory(
             request
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(

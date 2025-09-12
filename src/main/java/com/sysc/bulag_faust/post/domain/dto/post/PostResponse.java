@@ -1,10 +1,14 @@
-package com.sysc.bulag_faust.post.dto.post;
+package com.sysc.bulag_faust.post.domain.dto.post;
 
 import java.util.Date;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostResponse {
 
     private UUID id;

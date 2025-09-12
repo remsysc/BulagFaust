@@ -2,11 +2,11 @@ package com.sysc.bulag_faust.post.service.tag;
 
 import com.sysc.bulag_faust.core.exception.tag.TagAlreadyExist;
 import com.sysc.bulag_faust.core.exception.tag.TagNotFound;
-import com.sysc.bulag_faust.post.dto.tag.AddTagRequest;
-import com.sysc.bulag_faust.post.dto.tag.TagResponse;
-import com.sysc.bulag_faust.post.dto.tag.UpdateTagRequest;
-import com.sysc.bulag_faust.post.entities.Tag;
-import com.sysc.bulag_faust.post.mapper.TagMapper;
+import com.sysc.bulag_faust.post.domain.dto.tag.AddTagRequest;
+import com.sysc.bulag_faust.post.domain.dto.tag.TagResponse;
+import com.sysc.bulag_faust.post.domain.dto.tag.UpdateTagRequest;
+import com.sysc.bulag_faust.post.domain.entities.Tag;
+import com.sysc.bulag_faust.post.domain.mapper.TagMapper;
 import com.sysc.bulag_faust.post.repository.TagRepository;
 import java.util.List;
 import java.util.UUID;

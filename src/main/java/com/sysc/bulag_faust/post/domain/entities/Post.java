@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.post.entities;
+package com.sysc.bulag_faust.post.domain.entities;
 
 import com.sysc.bulag_faust.user.entities.User;
 import jakarta.persistence.Column;
@@ -74,7 +74,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-    
+
     //needs to be set<> to avoid multiple bag exception via hibernate cause of EntityGraph
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

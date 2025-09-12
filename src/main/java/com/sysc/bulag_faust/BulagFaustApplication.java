@@ -11,5 +11,6 @@ public class BulagFaustApplication {
         // TODO: CREATE ENTITIES, REPOSITORIES, SERVICES, CONTROLLERS
         // TODO: categories services, controllers etc
         // FIXME: post.setUser(user);
+        // LEARN: spring security and sql queries
     }
 }

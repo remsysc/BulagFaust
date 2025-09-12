@@ -1,7 +1,7 @@
-package com.sysc.bulag_faust.post.mapper;
+package com.sysc.bulag_faust.post.domain.mapper;
 
-import com.sysc.bulag_faust.post.dto.post.PostResponse;
-import com.sysc.bulag_faust.post.entities.Post;
+import com.sysc.bulag_faust.post.domain.dto.post.PostResponse;
+import com.sysc.bulag_faust.post.domain.entities.Post;
 import com.sysc.bulag_faust.user.entities.User;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -16,6 +16,7 @@ public interface PostMapper {
     List<PostResponse> toListDTO(List<Post> post);
 
     //null checks for lazy properties
+    // not needed with @EntityGraph
     default String mapAuthorName(User author) {
         return author != null ? author.getName() : null;
     }

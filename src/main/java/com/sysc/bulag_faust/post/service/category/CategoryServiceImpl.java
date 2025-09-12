@@ -2,33 +2,40 @@ package com.sysc.bulag_faust.post.service.category;
 
 import com.sysc.bulag_faust.core.exception.post.CategoryAlreadyExist;
 import com.sysc.bulag_faust.core.exception.post.CategoryNotFound;
-import com.sysc.bulag_faust.post.dto.category.AddCategoryRequest;
-import com.sysc.bulag_faust.post.dto.category.CategoryResponse;
-import com.sysc.bulag_faust.post.dto.category.UpdateCategoryRequest;
-import com.sysc.bulag_faust.post.entities.Category;
-import com.sysc.bulag_faust.post.mapper.CategoryMapper;
+import com.sysc.bulag_faust.post.domain.dto.category.CategoryResponse;
+import com.sysc.bulag_faust.post.domain.dto.category.CreateCategoryRequest;
+import com.sysc.bulag_faust.post.domain.dto.category.UpdateCategoryRequest;
+import com.sysc.bulag_faust.post.domain.entities.Category;
+import com.sysc.bulag_faust.post.domain.mapper.CategoryMapper;
 import com.sysc.bulag_faust.post.repository.CategoryRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
     @Override
-    public List<CategoryResponse> getAllCategory() {
-        List<Category> categories = categoryRepository.findAll();
-
+    public List<CategoryResponse> getAllCategoriesWithPosts() {
+        List<Category> categories = categoryRepository.findByPostsIsNotEmpty();
         return categoryMapper.toDtoList(categories);
     }
 
     @Override
-    public CategoryResponse addCategory(AddCategoryRequest request) {
+    public List<CategoryResponse> getAllCategories() {
+        return categoryMapper.toDtoList(categoryRepository.findAll());
+    }
+
+    @Override
+    @Transactional
+    public CategoryResponse createCategory(CreateCategoryRequest request) {
         if (categoryRepository.findByName(request.getName()) != null) {
             throw new CategoryAlreadyExist(request.getName());
         }
@@ -37,6 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryResponse updateCategory(UpdateCategoryRequest request) {
         if (categoryRepository.existsByName(request.getName())) {
             throw new CategoryAlreadyExist(request.getName());
@@ -55,6 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(UUID id) {
         categoryRepository.delete(getCategoryEntityById(id));
     }

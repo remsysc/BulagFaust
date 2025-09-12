@@ -1,6 +1,6 @@
 package com.sysc.bulag_faust.user.entities;
 
-import com.sysc.bulag_faust.post.entities.Post;
+import com.sysc.bulag_faust.post.domain.entities.Post;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,9 +62,6 @@ public class User {
             id = UUID.randomUUID();
         }
     }
-
-
-
 
     @Override
     public boolean equals(Object o) {
