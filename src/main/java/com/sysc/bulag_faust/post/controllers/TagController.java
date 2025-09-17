@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +29,8 @@ public class TagController {
     private final TagService tagService;
 
     @PostMapping
-    ResponseEntity<ApiResponse<TagResponse>> addTag(
+    @NotNull
+    public ResponseEntity<ApiResponse<TagResponse>> addTag(
         @Valid AddTagRequest request
     ) {
         TagResponse tag = tagService.addTag(request);
@@ -38,7 +40,8 @@ public class TagController {
     }
 
     @PutMapping
-    ResponseEntity<ApiResponse<TagResponse>> updateTag(
+    @NotNull
+    public ResponseEntity<ApiResponse<TagResponse>> updateTag(
         @Valid UpdateTagRequest request
     ) {
         TagResponse tag = tagService.updateTag(request);
@@ -48,7 +51,8 @@ public class TagController {
     }
 
     @GetMapping
-    ResponseEntity<ApiResponse<List<TagResponse>>> getAllTags() {
+    @NotNull
+    public ResponseEntity<ApiResponse<List<TagResponse>>> getAllTags() {
         return ResponseEntity.status(HttpStatus.OK).body(
             ApiResponse.success(
                 "Get all tags successfully",
@@ -58,7 +62,7 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ApiResponse<TagResponse>> getTagById(
+   public ResponseEntity<ApiResponse<TagResponse>> getTagById(
         @Valid @PathVariable UUID id
     ) {
         TagResponse tag = tagService.getTagById(id);

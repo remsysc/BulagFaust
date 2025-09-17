@@ -48,10 +48,9 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag getTagEntityById(UUID id) {
-        Tag tag = tagRepository
+        return tagRepository
             .findById(id)
             .orElseThrow(() -> new TagNotFound(id.toString()));
-        return tag;
     }
 
     @Override

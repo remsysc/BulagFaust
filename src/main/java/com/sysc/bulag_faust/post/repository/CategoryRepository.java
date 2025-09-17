@@ -1,17 +1,17 @@
 package com.sysc.bulag_faust.post.repository;
 
 import com.sysc.bulag_faust.post.domain.entities.Category;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CategoryRepository extends JpaRepository<Category, UUID> {
-    Category findByName(String name);
+import java.util.List;
+import java.util.UUID;
 
-    boolean existsByName(String name);
+@Repository
+public interface CategoryRepository extends JpaRepository<Category,  UUID> {
+
+    boolean existsByNameIgnoreCase(String name);
 
     //only good when posts per category is < 1K
     // filter in memory

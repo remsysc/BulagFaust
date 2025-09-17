@@ -5,15 +5,14 @@ import com.sysc.bulag_faust.post.domain.dto.category.CategoryResponse;
 import com.sysc.bulag_faust.post.domain.dto.category.CreateCategoryRequest;
 import com.sysc.bulag_faust.post.service.category.CategoryService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,7 +23,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
+    @NotNull
+    public ResponseEntity< ApiResponse<List<CategoryResponse>>> getAllCategories() {
         List<CategoryResponse> category = categoryService.getAllCategories();
 
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -33,8 +33,9 @@ public class CategoryController {
     }
 
     @PostMapping
-    ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
-        @Valid CreateCategoryRequest request
+    @NotNull
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
+        @Valid @RequestBody CreateCategoryRequest request
     ) {
         CategoryResponse categoryResponse = categoryService.createCategory(
             request

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +27,7 @@ public class PostControllers {
     private final PostService postService;
 
     @GetMapping
+    @NotNull
     public ResponseEntity<ApiResponse<List<PostResponse>>> getPosts() {
         List<PostResponse> post = postService.getAllPosts();
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -34,6 +36,7 @@ public class PostControllers {
     }
 
     @GetMapping("/{authorId}")
+    @NotNull
     public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPostsByUser(
         @Valid @PathVariable UUID authorId
     ) {
@@ -44,6 +47,7 @@ public class PostControllers {
     }
 
     @PostMapping
+    @NotNull
     public ResponseEntity<ApiResponse<PostResponse>> createPost(
         @Valid CreatePostRequest request,
         @Valid @PathVariable UUID authorId

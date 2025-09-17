@@ -1,52 +1,60 @@
 package com.sysc.bulag_faust.core.exception;
 
-import com.sysc.bulag_faust.core.exception.post.CategoryAlreadyExist;
-import com.sysc.bulag_faust.core.exception.post.CategoryNotFound;
+import com.sysc.bulag_faust.core.dto.ErrorResponse;
+import com.sysc.bulag_faust.core.exception.category.CategoryAlreadyExist;
+import com.sysc.bulag_faust.core.exception.category.CategoryNotFound;
 import com.sysc.bulag_faust.core.exception.tag.TagAlreadyExist;
 import com.sysc.bulag_faust.core.exception.user.UserNotFoundException;
-import com.sysc.bulag_faust.core.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgument(IllegalArgumentException e) {
+        return ErrorResponse.builder().code("ILLEGAL_ARGUMENT").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
+   }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse<Void> handleNotFound(NotFoundException e) {
-        return ApiResponse.error(e.getMessage());
+    public ErrorResponse handleNotFound(NotFoundException e) {
+        return ErrorResponse.builder().code("NOT_FOUND").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
     }
 
     //user exceptions
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse<Void> handleUserNotFound(UserNotFoundException e) {
-        return ApiResponse.error(e.getMessage());
+    public ErrorResponse handleUserNotFound(UserNotFoundException e) {
+        return ErrorResponse.builder().code("USER_NOT_FOUND").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
     }
 
     //category
     //
     @ExceptionHandler(CategoryNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse<Void> handleCategoryNotFound(CategoryNotFound e) {
-        return ApiResponse.error(e.getMessage());
+    public ErrorResponse handleCategoryNotFound(CategoryNotFound e) {
+        return ErrorResponse.builder().code("CATEGORY_NOT_FOUND").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
     }
 
     @ExceptionHandler(CategoryAlreadyExist.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiResponse<Void> handleCategoryAlreadyExist(
-        CategoryAlreadyExist e
+    public ErrorResponse  handleCategoryAlreadyExist(
+            CategoryAlreadyExist e
     ) {
-        return ApiResponse.error(e.getMessage());
+        return ErrorResponse.builder().code("CATEGORY_ALREADY_EXIST").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
     }
 
     // Tag
     //
     @ExceptionHandler(TagAlreadyExist.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiResponse<Void> handleTagAlreadyExist(TagAlreadyExist e) {
-        return ApiResponse.error(e.getMessage());
+    public ErrorResponse handleTagAlreadyExist(TagAlreadyExist e) {
+        return ErrorResponse.builder().code("TAG_ALREADY_EXIST").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
     }
 }

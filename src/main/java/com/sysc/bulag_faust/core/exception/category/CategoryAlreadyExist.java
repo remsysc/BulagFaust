@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.core.exception.post;
+package com.sysc.bulag_faust.core.exception.category;
 
 import com.sysc.bulag_faust.core.exception.AlreadyExistException;
 

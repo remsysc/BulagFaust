@@ -1,7 +1,7 @@
 package com.sysc.bulag_faust.post.service.category;
 
-import com.sysc.bulag_faust.core.exception.post.CategoryAlreadyExist;
-import com.sysc.bulag_faust.core.exception.post.CategoryNotFound;
+import com.sysc.bulag_faust.core.exception.category.CategoryAlreadyExist;
+import com.sysc.bulag_faust.core.exception.category.CategoryNotFound;
 import com.sysc.bulag_faust.post.domain.dto.category.CategoryResponse;
 import com.sysc.bulag_faust.post.domain.dto.category.CreateCategoryRequest;
 import com.sysc.bulag_faust.post.domain.dto.category.UpdateCategoryRequest;
@@ -11,6 +11,7 @@ import com.sysc.bulag_faust.post.repository.CategoryRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +36,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryResponse createCategory(CreateCategoryRequest request) {
-        if (categoryRepository.findByName(request.getName()) != null) {
+    public CategoryResponse createCategory(@NotNull  CreateCategoryRequest request) {
+        if (categoryRepository.existsByNameIgnoreCase(request.getName())) {
             throw new CategoryAlreadyExist(request.getName());
         }
         Category category = new Category(request.getName());
@@ -45,8 +46,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryResponse updateCategory(UpdateCategoryRequest request) {
-        if (categoryRepository.existsByName(request.getName())) {
+    public CategoryResponse updateCategory(@NotNull UpdateCategoryRequest request) {
+        if (categoryRepository.existsByNameIgnoreCase(request.getName())) {
             throw new CategoryAlreadyExist(request.getName());
         }
 
@@ -56,10 +57,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryEntityById(UUID id) {
-        Category category = categoryRepository
+        return categoryRepository
             .findById(id)
             .orElseThrow(() -> new CategoryNotFound(id.toString()));
-        return category;
     }
 
     @Override
