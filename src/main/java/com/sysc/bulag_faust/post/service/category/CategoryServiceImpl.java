@@ -8,12 +8,13 @@ import com.sysc.bulag_faust.post.domain.dto.category.UpdateCategoryRequest;
 import com.sysc.bulag_faust.post.domain.entities.Category;
 import com.sysc.bulag_faust.post.domain.mapper.CategoryMapper;
 import com.sysc.bulag_faust.post.repository.CategoryRepository;
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +66,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(UUID id) {
-        categoryRepository.delete(getCategoryEntityById(id));
+
+        Category category = getCategoryEntityById(id);
+        if(!category.getPosts().isEmpty())
+            throw new IllegalStateException("Category has posts associated with it");
+        categoryRepository.delete(category);
     }
 }

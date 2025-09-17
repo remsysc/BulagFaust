@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,24 +25,31 @@ public class CategoryController {
 
     @GetMapping
     @NotNull
-    public ResponseEntity< ApiResponse<List<CategoryResponse>>> getAllCategories() {
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
         List<CategoryResponse> category = categoryService.getAllCategories();
 
         return ResponseEntity.status(HttpStatus.OK).body(
-            ApiResponse.success("Success", category)
+                ApiResponse.success("Success", category)
         );
     }
 
     @PostMapping
     @NotNull
     public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
-        @Valid @RequestBody CreateCategoryRequest request
+            @Valid @RequestBody CreateCategoryRequest request
     ) {
         CategoryResponse categoryResponse = categoryService.createCategory(
-            request
+                request
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(
-            ApiResponse.success("Category added successfully", categoryResponse)
+                ApiResponse.success("Category added successfully", categoryResponse)
         );
+    }
+    @DeleteMapping("/{id}")
+    @NotNull
+    public  ResponseEntity<ApiResponse<CategoryResponse>> deleteCategory(@Valid @PathVariable UUID id)
+    {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("Category deleted successfully", null));
     }
 }
