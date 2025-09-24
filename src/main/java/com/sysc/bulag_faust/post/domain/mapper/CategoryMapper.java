@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 //Mapper handles transformation
+// unmappedTargetPolicy = ReportingPolicy.IGNORE to ignore unmapped fields
 @Mapper(componentModel = "spring", uses = { PostMapper.class })
 public interface CategoryMapper {
     @Mapping(
