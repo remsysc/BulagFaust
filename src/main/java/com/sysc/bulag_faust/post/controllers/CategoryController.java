@@ -20,41 +20,34 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.prefix}/category")
 public class CategoryController {
 
-    private final CategoryService categoryService;
+  private final CategoryService categoryService;
 
-    @GetMapping
-    @NotNull
-    public ResponseEntity<
-        ApiResponse<List<CategoryResponse>>
-    > getAllCategories() {
-        List<CategoryResponse> category = categoryService.getAllCategories();
+  @GetMapping
+  @NotNull
+  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
+    List<CategoryResponse> category = categoryService.getAllCategories();
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-            ApiResponse.success("Success", category)
-        );
-    }
+    return ResponseEntity.status(HttpStatus.OK).body(
+        ApiResponse.success("Success", category));
+  }
 
-    @PostMapping
-    @NotNull
-    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
-        @Valid @RequestBody CreateCategoryRequest request
-    ) {
-        CategoryResponse categoryResponse = categoryService.createCategory(
-            request
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-            ApiResponse.success("Category added successfully", categoryResponse)
-        );
-    }
+  @PostMapping
+  @NotNull
+  public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
+      @Valid @RequestBody CreateCategoryRequest request) {
+    CategoryResponse categoryResponse = categoryService.createCategory(
+        request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+        ApiResponse.success("Category added successfully", categoryResponse));
+  }
 
-    @DeleteMapping("/{id}")
-    @NotNull
-    public ResponseEntity<ApiResponse<CategoryResponse>> deleteCategory(
-        @Valid @PathVariable UUID id
-    ) {
-        categoryService.deleteCategory(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
-            ApiResponse.success("Category deleted successfully", null)
-        );
-    }
+  @DeleteMapping("/{id}")
+  @NotNull
+
+  public ResponseEntity<ApiResponse<CategoryResponse>> deleteCategory(
+      @Valid @PathVariable UUID id) {
+    categoryService.deleteCategory(id);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+        ApiResponse.success("Category deleted successfully", null));
+  }
 }
