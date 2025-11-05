@@ -5,14 +5,15 @@ import com.sysc.bulag_faust.post.domain.dto.category.CategoryResponse;
 import com.sysc.bulag_faust.post.domain.dto.category.CreateCategoryRequest;
 import com.sysc.bulag_faust.post.service.category.CategoryService;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,7 +25,7 @@ public class CategoryController {
 
   @GetMapping
   @NotNull
-  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
+  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories(){
     List<CategoryResponse> category = categoryService.getAllCategories();
 
     return ResponseEntity.status(HttpStatus.OK).body(

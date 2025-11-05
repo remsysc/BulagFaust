@@ -96,8 +96,8 @@ public class SecurityConfig {
         AuthenticationConfiguration authenticationConfiguration
     ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    
     }
-
     @Bean
     public AccessDeniedHandler accessDeniedHandler(ObjectMapper mapper) {
         return (request, response, accessDeniedException) -> {
