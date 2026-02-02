@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:alpine
@@ -12,6 +10,22 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - db-network
+
+  adminer:
+    image: adminer:latest
+    container_name: bulagfaust-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - db-network
 
 volumes:
   pgdata:
+
+networks:
+  db-network:
+    driver: bridge

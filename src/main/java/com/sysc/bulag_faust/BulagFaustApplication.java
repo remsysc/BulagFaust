@@ -9,9 +9,7 @@ public class BulagFaustApplication {
   public static void main(String[] args) {
     SpringApplication.run(BulagFaustApplication.class, args);
 
-    // FIXME: post.setUser(user);
-    // TODO: ADD JWT UTILS
     // LEARN: spring security and sql queries
   }
 }
-//test on zed
+// test on zed
