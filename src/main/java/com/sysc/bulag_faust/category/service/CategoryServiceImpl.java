@@ -14,6 +14,7 @@ import com.sysc.bulag_faust.category.mapper.CategoryCountDto;
 import com.sysc.bulag_faust.category.mapper.CategoryMapper;
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
+import com.sysc.bulag_faust.post.PostRepository;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,9 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryMapper categoryMapper;
 
   @Override
-  public List<CategoryCountDto> getAllCategoriesWithCounts() {
+  public List<CategoryResponse> getAllCategoriesWithCounts() {
 
-    List<CategoryCountDto> category = categoryRepository.findAllWithPublishedPostCounts();
+    List<CategoryResponse> category = categoryMapper.toDtoList(categoryRepository.findAll());
     return category;
 
   }
@@ -69,14 +70,13 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional
   @Override
   public void deleteCategory(@NonNull UUID id) {
-    Category category = getCategoryEntityById(id);
 
     // check if theres a post associated with it
-
-    if (!category.getPosts().isEmpty()) {
+    // TEST: test if working
+    if (categoryRepository.existsByIdAndPostsIsNotEmpty(id)) {
       throw new IllegalStateException("Category has posts associated with it");
     }
-    categoryRepository.delete(category);
+    categoryRepository.deleteById(id);
   }
 
 }

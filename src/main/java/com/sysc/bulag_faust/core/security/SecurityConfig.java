@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,13 +37,14 @@ public class SecurityConfig {
       DaoAuthenticationProvider daoAuthenticationProvider, JwtAuthEntryPoint jwtAuthEntryPoint,
       AccessDeniedHandler accessDeniedHandler) throws Exception {
     http
+        .cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
         .exceptionHandling(
             exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint).accessDeniedHandler(accessDeniedHandler))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
             .requestMatchers("/api/v1/auth/**").permitAll() // ← /api/v1/auth/login
-            .requestMatchers("/api/v1/category/**").authenticated() // ← /api/v1/category
+            .requestMatchers("/api/v1/categories/**").authenticated() // ← /api/v1/category
             .anyRequest().denyAll())
         .authenticationProvider(daoAuthenticationProvider)
         .addFilterBefore(authTokenFilter,

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
-import com.sysc.bulag_faust.category.mapper.CategoryCountDto;
 import com.sysc.bulag_faust.category.service.CategoryService;
 import com.sysc.bulag_faust.core.response.ApiResponse;
 
@@ -25,15 +24,15 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/category")
+@RequestMapping("${api.prefix}/categories")
 public class CategoryController {
 
   private final CategoryService categoryService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<CategoryCountDto>>> getAllCategoriesWithPublishedCount() {
+  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategoriesWithPublishedCount() {
 
-    List<CategoryCountDto> category = categoryService.getAllCategoriesWithCounts();
+    List<CategoryResponse> category = categoryService.getAllCategoriesWithCounts();
 
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Categories retrieved", category));
   }

@@ -9,4 +9,5 @@ import com.sysc.bulag_faust.post.entity.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, UUID> {
+
 }
