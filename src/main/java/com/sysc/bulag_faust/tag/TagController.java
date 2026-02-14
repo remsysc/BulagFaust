@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,4 +28,11 @@ public class TagController {
     return ResponseEntity.status(200).body(ApiResponse.success("Retrieved all tags", tags));
   }
 
+  // @PostMapping
+  // // TODO: add later along with delete and update
+  // public ResponseEntity<ApiResponse<TagResponse>> createTag() {
+  //
+  //
+  //
+  // }
 }
