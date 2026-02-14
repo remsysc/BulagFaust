@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sysc.bulag_faust.category.Category;
 import com.sysc.bulag_faust.tag.Tag;
 import com.sysc.bulag_faust.user.User;
@@ -61,6 +62,7 @@ public class Post {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "author_id", nullable = false)
+  @JsonIgnore
   private User author;
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = {
@@ -68,22 +70,24 @@ public class Post {
   })
   @JoinTable(name = "post_categories", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
   @Builder.Default
+  @JsonIgnore
   private Set<Category> categories = new HashSet<>();
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   @JoinTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   @Builder.Default
+  @JsonIgnore
   private Set<Tag> tags = new HashSet<>();
 
   @Column(nullable = false, updatable = false)
-  private LocalDateTime createAt;
+  private LocalDateTime createdAt;
 
   private LocalDateTime updatedAt;
 
   // ONLY repository.save() triggers them
   @PrePersist
   protected void onCreate() {
-    this.createAt = LocalDateTime.now();
+    this.createdAt = LocalDateTime.now();
     this.updatedAt = null;
   }
 

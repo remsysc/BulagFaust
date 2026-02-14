@@ -28,10 +28,9 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryMapper categoryMapper;
 
   @Override
-  public List<CategoryResponse> getAllCategoriesWithCounts() {
+  public List<CategoryCountDto> getAllCategoriesWithCounts() {
 
-    List<CategoryResponse> category = categoryMapper.toDtoList(categoryRepository.findAll());
-    return category;
+    return categoryRepository.findAllWithPublishedPostCounts();
 
   }
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
+import com.sysc.bulag_faust.category.mapper.CategoryCountDto;
 import com.sysc.bulag_faust.category.service.CategoryService;
 import com.sysc.bulag_faust.core.response.ApiResponse;
 
@@ -30,9 +31,9 @@ public class CategoryController {
   private final CategoryService categoryService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategoriesWithPublishedCount() {
+  public ResponseEntity<ApiResponse<List<CategoryCountDto>>> getAllCategoriesWithPublishedCount() {
 
-    List<CategoryResponse> category = categoryService.getAllCategoriesWithCounts();
+    List<CategoryCountDto> category = categoryService.getAllCategoriesWithCounts();
 
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Categories retrieved", category));
   }
