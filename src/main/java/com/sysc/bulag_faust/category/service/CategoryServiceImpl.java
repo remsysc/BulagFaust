@@ -14,7 +14,6 @@ import com.sysc.bulag_faust.category.mapper.CategoryCountDto;
 import com.sysc.bulag_faust.category.mapper.CategoryMapper;
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
-import com.sysc.bulag_faust.post.PostRepository;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +68,8 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional
   @Override
   public void deleteCategory(@NonNull UUID id) {
+    // NOTE: check if theres a post associated with it
 
-    // check if theres a post associated with it
-    // TEST: test if working
     if (categoryRepository.existsByIdAndPostsIsNotEmpty(id)) {
       throw new IllegalStateException("Category has posts associated with it");
     }
