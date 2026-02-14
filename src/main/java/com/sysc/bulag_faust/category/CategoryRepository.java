@@ -43,5 +43,4 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
   boolean existsByNameIgnoreCaseAndIdNot(String name, UUID id);
 
   boolean existsByIdAndPostsIsNotEmpty(UUID id);
-
 }

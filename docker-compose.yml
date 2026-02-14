@@ -17,7 +17,7 @@ services:
     image: adminer:latest
     container_name: bulagfaust-adminer
     ports:
-      - "8081:8081"
+      - "8081:8080"
     depends_on:
       - postgres
     networks:

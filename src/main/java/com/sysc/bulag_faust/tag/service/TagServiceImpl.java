@@ -4,25 +4,23 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
 import com.sysc.bulag_faust.tag.TagRepository;
 import com.sysc.bulag_faust.tag.dto.TagResponse;
-import com.sysc.bulag_faust.tag.mapper.TagMapper;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class TagServiceImpl implements TagService {
 
   private final TagRepository tagRepository;
 
-  private final TagMapper tagMapper;
-
   @Override
   public TagResponse getTagById(UUID id) {
-
     return tagRepository.findTagByIdWithPostCount(id).orElseThrow(
         () -> new NotFoundException("Tag with id: " + id + "not found"));
 
@@ -30,7 +28,7 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public List<TagResponse> getAllTags() {
-    return tagMapper.toResponses(tagRepository.findAll());
+    return tagRepository.findAllByIdWithPostCount();
   }
 
   @Override

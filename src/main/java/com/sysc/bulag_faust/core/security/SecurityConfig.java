@@ -45,6 +45,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authz -> authz
             .requestMatchers("/api/v1/auth/**").permitAll() // ← /api/v1/auth/login
             .requestMatchers("/api/v1/categories/**").authenticated() // ← /api/v1/category
+            .requestMatchers("/api/v1/tags/**").authenticated()
             .anyRequest().denyAll())
         .authenticationProvider(daoAuthenticationProvider)
         .addFilterBefore(authTokenFilter,

@@ -1,5 +1,6 @@
 package com.sysc.bulag_faust.tag;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,5 +28,21 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
       GROUP BY t.id, t.name
       """)
   Optional<TagResponse> findTagByIdWithPostCount(@Param("id") UUID id);
+
+  @Query("""
+      SELECT new com.sysc.bulag_faust.tag.dto.TagResponse
+
+      ( t.id,
+      t.name,
+      COUNT(p)
+      )
+      FROM Tag t
+      LEFT JOIN t.posts p ON p.status = 'PUBLISHED'
+      WHERE t.id = :id
+      GROUP BY t.id, t.name
+      """)
+  List<TagResponse> findAllByIdWithPostCount();
+
+  boolean existsByIdAndPostsIsNotEmpty(UUID id);
 
 }
