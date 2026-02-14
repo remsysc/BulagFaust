@@ -22,7 +22,7 @@ public class TagController {
   private final TagService tagService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<TagResponse>>> getAllTagWithPublishedPost() {
+  public ResponseEntity<ApiResponse<List<TagResponse>>> getAllTagsWithPublishedPost() {
     List<TagResponse> tags = tagService.getAllTags();
     return ResponseEntity.status(200).body(ApiResponse.success("Retrieved all tags", tags));
   }

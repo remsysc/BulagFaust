@@ -38,10 +38,9 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
       )
       FROM Tag t
       LEFT JOIN t.posts p ON p.status = 'PUBLISHED'
-      WHERE t.id = :id
       GROUP BY t.id, t.name
       """)
-  List<TagResponse> findAllByIdWithPostCount();
+  List<TagResponse> findAllWithPostCount();
 
   boolean existsByIdAndPostsIsNotEmpty(UUID id);
 
