@@ -1,6 +1,5 @@
 package com.sysc.bulag_faust.core.security;
 
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.sysc.bulag_faust.post.entity.Post;
@@ -26,6 +27,6 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
       """)
 
-  List<Post> findAllByCategoryIdAndTagId(UUID categoryId, UUID tagId);
+  List<Post> findAllByCategoryIdAndTagId(@Param("categoryId") UUID categoryId, @Param("tagId") UUID tagId);
 
 }

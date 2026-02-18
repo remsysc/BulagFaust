@@ -50,9 +50,7 @@ public class SecurityUserDetails implements UserDetails {
   }
 
   // defaults to true
-  // TODO: MVP PHASE
-
-  @Override
+  // INFO: MVP PHASE
   public boolean isAccountNonExpired() {
     return true;
   }

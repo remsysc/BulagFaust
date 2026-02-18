@@ -5,14 +5,15 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
 import com.sysc.bulag_faust.core.response.ApiErrorResponse;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,14 @@ public class GlobalExceptionHandler {
 
   // add spring exceptions
   // i.e. wrong paths etc
+
+  @ExceptionHandler(BadCredentialsException.class)
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ApiErrorResponse handleBadCredentials(BadCredentialsException e) {
+    log.warn("Bad Credentials: {}", e.getMessage());
+    return buildErrorResponse("UNAUTHORIZED", e.getMessage());
+  }
 
   @ExceptionHandler(IllegalStateException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
@@ -36,13 +45,6 @@ public class GlobalExceptionHandler {
   public ApiErrorResponse handleIllegalArgument(IllegalArgumentException e) {
     log.warn("Validation failed: {}", e.getMessage());
     return buildErrorResponse("ILLEGAL_ARGUMENT", e.getMessage());
-  }
-
-  @ExceptionHandler(EntityNotFoundException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ApiErrorResponse handleEntityNotFound(EntityNotFoundException ex) {
-    log.warn("Entity not found: {}", ex.getMessage());
-    return buildErrorResponse("ENTITY_NOT_FOUND", ex.getMessage());
   }
 
   @ExceptionHandler(AccessDeniedException.class)
@@ -84,13 +86,13 @@ public class GlobalExceptionHandler {
     log.error("Unexpected error at {}: ", request.getRequestURI(), ex);
     return buildErrorResponse("INTERNAL_SERVER_ERROR", "An unexpected error occurred");
   }
-  //
-  // @ExceptionHandler(NotFoundException.class)
-  // @ResponseStatus(HttpStatus.NOT_FOUND)
-  // public ApiErrorResponse handleNotFound(NotFoundException e) {
-  // return
-  // ApiErrorResponse.builder().code("NOT_FOUND").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
-  // }
+
+  @ExceptionHandler(NotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ApiErrorResponse handleNotFound(NotFoundException e) {
+    log.warn("Entity not found: {}", e.getMessage());
+    return ApiErrorResponse.builder().code("NOT_FOUND").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
+  }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)

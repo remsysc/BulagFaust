@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryResponse createCategory(@NonNull CreateCategoryRequest request) {
 
     if (categoryRepository.existsByNameIgnoreCase(request.getName())) {
-      throw new AlreadyExistException("Category: " + request.getName() + " already exist");
+      throw new AlreadyExistException("Category", request.getName());
     }
 
     Category category = categoryMapper.toEntity(request);
@@ -51,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryResponse updateCategory(@NonNull UUID id, @NonNull CreateCategoryRequest request) {
     Category existing = getCategoryEntityById(id);
     if (categoryRepository.existsByNameIgnoreCaseAndIdNot(request.getName(), id)) {
-      throw new AlreadyExistException("Category: " + request.getName() + " already exist");
+      throw new AlreadyExistException("Category", id);
     }
 
     Category updated = existing.toBuilder().name(request.getName()).build();
@@ -62,13 +62,12 @@ public class CategoryServiceImpl implements CategoryService {
   private Category getCategoryEntityById(@NonNull UUID id) {
 
     return categoryRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("ID: " + id.toString() + " not found"));
+        .orElseThrow(() -> new NotFoundException("Category", id));
   }
 
   @Transactional
   @Override
   public void deleteCategory(@NonNull UUID id) {
-    // NOTE: check if theres a post associated with it
 
     if (categoryRepository.existsByIdAndPostsIsNotEmpty(id)) {
       throw new IllegalStateException("Category has posts associated with it");

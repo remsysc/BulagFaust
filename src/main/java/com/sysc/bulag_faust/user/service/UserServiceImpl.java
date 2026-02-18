@@ -20,19 +20,18 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User getUserEntityById(UUID id) {
-    return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User: " + id + " not found"));
-    // TODO: fix the not fond exception, lazy
+    return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User", id));
   }
 
   @Override
   public User getUserByUsername(String username) {
     return userRepository.findByUsername(username)
-        .orElseThrow(() -> new NotFoundException("User: " + username + " not found"));
+        .orElseThrow(() -> new NotFoundException("User", username));
   }
 
   @Override
   public User getUserByEmail(String email) {
-    return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User: " + email + " not found"));
+    return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User", email));
 
   }
 
