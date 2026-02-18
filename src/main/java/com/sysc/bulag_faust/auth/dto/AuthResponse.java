@@ -1,4 +1,4 @@
-package com.sysc.bulag_faust.core.response;
+package com.sysc.bulag_faust.auth.dto;
 
 import java.util.UUID;
 

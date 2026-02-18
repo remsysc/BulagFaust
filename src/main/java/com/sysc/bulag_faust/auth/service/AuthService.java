@@ -1,9 +1,12 @@
 
 package com.sysc.bulag_faust.auth.service;
 
-import org.springframework.security.core.Authentication;
+import com.sysc.bulag_faust.auth.dto.AuthResponse;
+import com.sysc.bulag_faust.auth.dto.SignUpRequest;
 
 public interface AuthService {
-  Authentication authenticate(String email, String password);
+  AuthResponse authenticate(String email, String password);
+
+  AuthResponse register(SignUpRequest request);
 
 }
