@@ -27,6 +27,8 @@ public class GlobalExceptionHandler {
 
   // add spring exceptions
   // i.e. wrong paths etc
+  //
+  // TODO: add NoResourceFoundException
 
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)

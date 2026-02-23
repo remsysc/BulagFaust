@@ -37,12 +37,15 @@ public class TagServiceImpl implements TagService {
     return tagRepository.findAllWithPostCount();
   }
 
+  @Transactional
   @Override
-  public void deleteTagById(UUID id) {
-    if (tagRepository.existsById(id))
-      throw new AlreadyExistException("Tag", id);
+  public TagResponse deleteTagById(UUID id) {
+    if (!tagRepository.existsById(id))
+      throw new NotFoundException("Tag", id);
 
+    TagResponse tag = getTagById(id);
     tagRepository.deleteById(id);
+    return tag;
 
   }
 

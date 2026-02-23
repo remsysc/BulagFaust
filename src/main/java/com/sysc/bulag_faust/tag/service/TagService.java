@@ -12,7 +12,7 @@ public interface TagService {
 
   List<TagResponse> getAllTags();
 
-  void deleteTagById(UUID id);
+  TagResponse deleteTagById(UUID id);
 
   TagResponse createTag(CreateTagRequest request);
 }
