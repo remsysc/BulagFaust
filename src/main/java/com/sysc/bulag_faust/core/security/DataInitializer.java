@@ -21,23 +21,23 @@ public class DataInitializer {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
-  @EventListener(ApplicationReadyEvent.class)
-  public void createTestUser() {
-    if (userRepository.findByEmail("test@example.com").isEmpty()) {
-      User testUser = User.builder()
-          .username("testuser") // ← ADD THIS (NOT NULL required!)
-          .email("test@example.com")
-          .password(passwordEncoder.encode("password123"))
-          .build();
-      userRepository.save(testUser);
-    }
-  }
-
-  private Role createUserRole() {
-    Role role = new Role();
-    role.setId(UUID.randomUUID());
-    role.setName("USER"); // Or fetch from Role repo
-    return role;
-  }
+  // @EventListener(ApplicationReadyEvent.class)
+  // public void createTestUser() {
+  // if (userRepository.findByEmail("test@example.com").isEmpty()) {
+  // User testUser = User.builder()
+  // .username("testuser") // ← ADD THIS (NOT NULL required!)
+  // .email("test@example.com")
+  // .password(passwordEncoder.encode("password123"))
+  // .build();
+  // userRepository.save(testUser);
+  // }
+  // }
+  //
+  // private Role createUserRole() {
+  // Role role = new Role();
+  // role.setId(UUID.randomUUID());
+  // role.setName("USER"); // Or fetch from Role repo
+  // return role;
+  // }
 
 }

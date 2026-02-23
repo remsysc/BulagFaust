@@ -3,15 +3,18 @@ package com.sysc.bulag_faust.core.exceptions;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
+import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.response.ApiErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,8 +28,21 @@ public class GlobalExceptionHandler {
   // add spring exceptions
   // i.e. wrong paths etc
 
-  @ExceptionHandler(BadCredentialsException.class)
+  @ExceptionHandler(UsernameNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ApiErrorResponse handleUsernameNotFound(UsernameNotFoundException ex) {
+    log.warn("Username not found: {}", ex.getMessage());
+    return buildErrorResponse("NOT_FOUND", ex.getMessage());
+  }
 
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ApiErrorResponse handleDataIntegrityViolation(DataIntegrityViolationException e) {
+    log.error("Unexpected database integrity violation: {}", e);
+    return buildErrorResponse("DATA_INTEGRITY_VIOLATION", e.getMessage());
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ApiErrorResponse handleBadCredentials(BadCredentialsException e) {
     log.warn("Bad Credentials: {}", e.getMessage());
@@ -55,7 +71,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseStatus(HttpStatus.CONFLICT)
   public ApiErrorResponse handleConstraintViolation(ConstraintViolationException ex) {
     // ERROR because:
     // - Database constraint violated unexpectedly
@@ -92,6 +108,14 @@ public class GlobalExceptionHandler {
   public ApiErrorResponse handleNotFound(NotFoundException e) {
     log.warn("Entity not found: {}", e.getMessage());
     return ApiErrorResponse.builder().code("NOT_FOUND").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
+  }
+
+  @ExceptionHandler(AlreadyExistException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ApiErrorResponse handleAlreadyExist(AlreadyExistException e) {
+
+    log.warn("Entity already exists: {}", e.getMessage());
+    return ApiErrorResponse.builder().code("CONFLICT").message(e.getMessage()).timestamp(LocalDateTime.now()).build();
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

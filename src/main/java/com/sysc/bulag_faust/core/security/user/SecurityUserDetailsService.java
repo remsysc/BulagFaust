@@ -22,7 +22,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(@NotNull String email) throws UsernameNotFoundException {
     log.debug("Auth attempt for email: {}", email);
-    User user = userRepository.findByEmail(email) // TODO: try when the email is null if it will crash without exception
+    User user = userRepository.findByEmail(email)
         .orElseThrow(() -> {
           log.warn("User not found with email: {}", email);
           return new UsernameNotFoundException("User not found with email:" + email);

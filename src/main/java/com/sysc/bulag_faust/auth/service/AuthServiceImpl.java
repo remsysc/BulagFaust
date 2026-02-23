@@ -1,5 +1,6 @@
 package com.sysc.bulag_faust.auth.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,9 @@ public class AuthServiceImpl implements AuthService {
   private final PasswordEncoder passwordEncoder;
   private final JwtUtils jwtUtils;
 
+  @Value("${auth.token.expirationInMils}")
+  private long expirationTime;
+
   @Override
   public AuthResponse authenticate(@NonNull String email, @NonNull String password) {
 
@@ -36,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     String token = jwtUtils.generateTokenForUser(auth);
 
     SecurityUserDetails userDetails = (SecurityUserDetails) auth.getPrincipal();
-    return new AuthResponse(userDetails.getId(), "Bearer", token, 84000L);
+    return new AuthResponse(userDetails.getId(), "Bearer", token, expirationTime / 1000);
   }
 
   @Transactional
@@ -50,6 +54,11 @@ public class AuthServiceImpl implements AuthService {
         .password(passwordEncoder.encode(request.password()))
         .build();
     User saved = userRepository.save(user);
-    return authenticate(saved.getEmail(), saved.getPassword());
+    SecurityUserDetails userDetails = SecurityUserDetails.buildUserDetails(saved);
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
+        userDetails.getAuthorities());
+    String token = jwtUtils.generateTokenForUser(auth);
+
+    return new AuthResponse(saved.getId(), "Bearer", token, expirationTime / 1000);
   }
 }

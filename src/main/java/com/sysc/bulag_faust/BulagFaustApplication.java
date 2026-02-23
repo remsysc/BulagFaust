@@ -10,6 +10,6 @@ public class BulagFaustApplication {
     SpringApplication.run(BulagFaustApplication.class, args);
 
     // LEARN: spring security and sql queries
+    // TODO: add rate limiting, revocation, lockout mechanism
   }
 }
-// test on zed

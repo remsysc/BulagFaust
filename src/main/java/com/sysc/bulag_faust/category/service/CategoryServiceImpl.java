@@ -67,12 +67,14 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Transactional
   @Override
-  public void deleteCategory(@NonNull UUID id) {
+  public CategoryResponse deleteCategoryById(@NonNull UUID id) {
 
     if (categoryRepository.existsByIdAndPostsIsNotEmpty(id)) {
       throw new IllegalStateException("Category has posts associated with it");
     }
+    CategoryResponse categoryResponse = categoryMapper.toDto(getCategoryEntityById(id));
     categoryRepository.deleteById(id);
+    return categoryResponse;
   }
 
 }
