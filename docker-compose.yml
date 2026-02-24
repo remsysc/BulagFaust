@@ -82,7 +82,7 @@ services:
     volumes:
       # Mount source so Vite HMR picks up changes without rebuild
       - ./frontend/src:/app/src
-     # - ./frontend/index.html:/app/index.html
+      - ./frontend/index.html:/app/index.html
       # Anonymous volume keeps node_modules from being overwritten by the bind mount
       - /app/node_modules
     ports:
