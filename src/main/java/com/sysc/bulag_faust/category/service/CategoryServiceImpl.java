@@ -49,13 +49,13 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional
   @Override
   public CategoryResponse updateCategory(@NonNull UUID id, @NonNull CreateCategoryRequest request) {
-    Category existing = getCategoryEntityById(id);
     if (categoryRepository.existsByNameIgnoreCaseAndIdNot(request.getName(), id)) {
       throw new AlreadyExistException("Category", id);
     }
+    Category existing = getCategoryEntityById(id);
 
-    Category updated = existing.toBuilder().name(request.getName()).build();
-    return categoryMapper.toDto(categoryRepository.save(updated));
+    existing.updateName(request.getName());
+    return categoryMapper.toDto(existing);
 
   }
 

@@ -22,7 +22,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Entity
-@Builder(toBuilder = true)
+@Builder
 @Accessors(chain = true)
 @Getter
 @Setter(AccessLevel.PRIVATE)
@@ -41,6 +41,10 @@ public class Category {
   @Builder.Default
   @ManyToMany(mappedBy = "categories")
   private Set<Post> posts = new HashSet<>();
+
+  public void updateName(String newName) {
+    this.name = newName;
+  }
 
   @Override
   public int hashCode() {
