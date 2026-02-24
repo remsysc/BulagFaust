@@ -1,31 +1,112 @@
+##############################################################################
+# bulag-faust — full stack docker compose
+#
+# Services:
+#   postgres  — database (persisted in named volume)
+#   backend   — Spring Boot API  (port 8080, waits for postgres)
+#   frontend  — React/Vite dev server with HMR  (port 5173)
+#
+# Usage:
+#   docker compose up --build          # first run or after code changes
+#   docker compose up                  # subsequent runs (uses cache)
+#   docker compose down -v             # destroy everything including DB volume
+##############################################################################
+
 services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
   postgres:
-    image: postgres:alpine
+    image: postgres:16-alpine          # pin a specific major version
     container_name: bulagfaust-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: postgres
+      POSTGRES_DB:       mydb
+      POSTGRES_USER:     postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5432:5432"                    # expose so you can connect with DBeaver/psql locally
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - db-network
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
+  # ── Spring Boot backend ─────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .                       # project root (where pom.xml lives)
+      dockerfile: Dockerfile.backend
+    container_name: bulagfaust-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy     # only start once postgres is truly ready
+    environment:
+      # Override application.properties at runtime — keeps secrets out of source
+      SPRING_DATASOURCE_URL:      jdbc:postgresql://postgres:5432/mydb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      AUTH_TOKEN_JWTSECRET:       Oc15kKRy775mTZE8+sHro+5IDAmp3Q0aOA/ov/CV9w8=
+      AUTH_TOKEN_EXPIRATIONINMILS: "3600000"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # Tune JVM for container memory limits
+      JAVA_OPTS: "-Xms128m -Xmx512m"
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  # ── React / Vite frontend (dev — hot module replacement) ───────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev                      # use the dev stage for local development
+    container_name: bulagfaust-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      # Vite reads these at build time / HMR connection
+      VITE_API_BASE: ""                # empty = same origin proxy (configured in vite.config.js)
+    volumes:
+      # Mount source so Vite HMR picks up changes without rebuild
+      - ./frontend/src:/app/src
+     # - ./frontend/index.html:/app/index.html
+      # Anonymous volume keeps node_modules from being overwritten by the bind mount
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
+
+  # ── Adminer (DB GUI) ────────────────────────────────────────────────────────
   adminer:
     image: adminer:latest
     container_name: bulagfaust-adminer
+    restart: unless-stopped
     ports:
       - "8081:8080"
     depends_on:
       - postgres
     networks:
-      - db-network
+      - app-network
 
+# ── Named volume (data survives container restarts) ─────────────────────────
 volumes:
   pgdata:
 
+# ── Single network so all containers can reach each other by service name ───
 networks:
-  db-network:
+  app-network:
     driver: bridge
