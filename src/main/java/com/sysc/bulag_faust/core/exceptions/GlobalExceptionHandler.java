@@ -29,6 +29,7 @@ public class GlobalExceptionHandler {
   // i.e. wrong paths etc
   //
   // TODO: add NoResourceFoundException
+  // TODO: HttpRequestMethodNotSupportedException
 
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
