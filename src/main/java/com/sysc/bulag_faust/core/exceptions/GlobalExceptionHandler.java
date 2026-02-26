@@ -8,10 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
@@ -28,8 +30,20 @@ public class GlobalExceptionHandler {
   // add spring exceptions
   // i.e. wrong paths etc
   //
-  // TODO: add NoResourceFoundException
-  // TODO: HttpRequestMethodNotSupportedException
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+  public ApiErrorResponse handleRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+    log.warn("Method not allowed: {}", ex.getMessage());
+    return buildErrorResponse("METHOD_NOT_ALLOWED", ex.getMessage());
+  }
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ApiErrorResponse handleNoResourceNotFound(NoResourceFoundException ex) {
+    log.warn("Resource not found: {}", ex.getMessage());
+    return buildErrorResponse("NOT_FOUND", ex.getMessage());
+  }
 
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)

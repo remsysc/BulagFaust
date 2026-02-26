@@ -40,11 +40,8 @@ public class TagController {
   }
 
   @PostMapping
-  // TODO: add later along with delete and update
   public ResponseEntity<ApiResponse<TagResponse>> createTag(@Valid @RequestBody CreateTagRequest request) {
-
     TagResponse tag = tagService.createTag(request);
     return ResponseEntity.status(201).body(ApiResponse.success("Tag created: " + request.name(), tag));
-
   }
 }
