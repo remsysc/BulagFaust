@@ -5,7 +5,6 @@
 - [BlulagFaust](#blulagfaust)
 <!--toc:end-->
 
-Dev test
 A blog post.
 Backend
 Using Curl or Postman
