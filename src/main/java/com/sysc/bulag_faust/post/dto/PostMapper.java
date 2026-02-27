@@ -12,6 +12,7 @@ import com.sysc.bulag_faust.user.dto.UserMapper;
 @Mapper(componentModel = "spring", uses = { CategoryMapper.class, TagMapper.class, UserMapper.class })
 public interface PostMapper {
 
-  public List<PostResponse> toResponseList(List<Post> posts);
+  List<PostResponse> toResponses(List<Post> posts);
 
+  PostResponse toResponse(Post post);
 }

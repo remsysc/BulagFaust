@@ -49,8 +49,6 @@ public class SecurityUserDetails implements UserDetails {
     return email;
   }
 
-  // defaults to true
-  // INFO: MVP PHASE
   public boolean isAccountNonExpired() {
     return true;
   }
