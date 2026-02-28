@@ -4,10 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.post.entity.PostStatus;
-import com.sysc.bulag_faust.tag.dto.TagResponse;
-import com.sysc.bulag_faust.user.dto.UserResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

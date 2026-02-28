@@ -1,5 +1,6 @@
 package com.sysc.bulag_faust.post.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +17,7 @@ import com.sysc.bulag_faust.core.utils.EntityValidationUtils;
 import com.sysc.bulag_faust.post.PostRepository;
 import com.sysc.bulag_faust.post.dto.PostMapper;
 import com.sysc.bulag_faust.post.dto.PostResponse;
-import com.sysc.bulag_faust.post.dto.request.CreateDraftRequest;
+import com.sysc.bulag_faust.post.dto.request.CreatePostRequest;
 import com.sysc.bulag_faust.post.entity.Post;
 import com.sysc.bulag_faust.post.entity.PostStatus;
 import com.sysc.bulag_faust.tag.Tag;
@@ -51,20 +52,23 @@ public class PostServiceImpl implements PostService {
 
   @Transactional
   @Override
-  public PostResponse createDraft(@NotNull CreateDraftRequest request, UUID authorId) {
+  public PostResponse createPost(@NotNull CreatePostRequest request, UUID authorId) {
 
     User author = userRepository.getReferenceById(authorId);
 
     Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
     Set<Tag> tags = resolveOrCreateTags(request.tagNames());
-
     EntityValidationUtils.vaidateAllFound(request.categoryIds(), categories, Category::getId,
         "Category");
+
+    if (request.status() == PostStatus.PUBLISHED) {
+      validateForPublish(request);
+    }
 
     Post post = Post.builder().author(author)
         .title(request.title())
         .content(request.content())
-        .status(PostStatus.DRAFT)
+        .status(request.status())
         .categories(categories)
         .tags(tags)
         .build();
@@ -79,6 +83,26 @@ public class PostServiceImpl implements PostService {
             .orElseGet(() -> tagRepository.save(
                 Tag.builder().name(name).build())))
         .collect(Collectors.toSet());
+  }
+
+  // TODO: add groupValidation
+  private void validateForPublish(CreatePostRequest request) {
+    List<String> errors = new ArrayList<>();
+
+    if (request.title() == null || request.title().isBlank()) {
+      errors.add("Title is required to publish");
+    }
+    if (request.content() == null || request.content().isBlank()) {
+      errors.add("Content is required to publish");
+    }
+    if (request.categoryIds() == null || request.categoryIds().isEmpty()) {
+      errors.add("At least one category is required to publish");
+    }
+
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException(String.join(", ", errors));
+      // your GlobalExceptionHandler already handles this ✅
+    }
   }
 
 }
