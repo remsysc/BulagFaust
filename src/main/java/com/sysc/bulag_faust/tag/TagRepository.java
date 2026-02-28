@@ -46,6 +46,8 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
 
   boolean existsByName(String name);
 
+  Optional<Tag> findByNameIgnoreCase(String name);
+
   boolean existsByNameIgnoreCase(String name);
 
 }
