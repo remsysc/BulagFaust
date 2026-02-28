@@ -81,9 +81,7 @@ public class User {
   @PrePersist
   protected void onCreate() {
     this.createdAt = LocalDateTime.now();
-    if (id == null) {
-      id = UUID.randomUUID();
-    }
+
   }
 
   @Override

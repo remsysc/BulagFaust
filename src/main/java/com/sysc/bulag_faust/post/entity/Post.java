@@ -54,6 +54,7 @@ public class Post {
   @Column(nullable = false, columnDefinition = "TEXT") // database can accomodate to growing content
   private String content;
 
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private PostStatus status;
 
@@ -84,16 +85,23 @@ public class Post {
 
   private LocalDateTime updatedAt;
 
+  private void setReadingTime() {
+    int wordCount = this.content.split("\\s+").length;
+    this.readingTime = (int) Math.ceil(wordCount / 200.0);
+  }
+
   // ONLY repository.save() triggers them
   @PrePersist
   protected void onCreate() {
     this.createdAt = LocalDateTime.now();
     this.updatedAt = null;
+    setReadingTime();
   }
 
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = LocalDateTime.now();
+    setReadingTime();
   }
 
   @Override

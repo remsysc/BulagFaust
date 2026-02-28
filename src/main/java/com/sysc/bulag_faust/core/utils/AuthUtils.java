@@ -14,6 +14,10 @@ public class AuthUtils {
     SecurityUserDetails userDetails = (SecurityUserDetails) SecurityContextHolder
         .getContext().getAuthentication().getPrincipal();
 
+    // ADD THIS
+    System.out.println("User ID: " + userDetails.getId());
+    System.out.println("User email: " + userDetails.getUsername());
+
     return userDetails.getId();
   }
 }
