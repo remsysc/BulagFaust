@@ -3,7 +3,6 @@ package com.sysc.bulag_faust.post.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sysc.bulag_faust.category.Category;
 import com.sysc.bulag_faust.category.CategoryRepository;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
+import com.sysc.bulag_faust.core.utils.EntityValidationUtils;
 import com.sysc.bulag_faust.post.PostRepository;
 import com.sysc.bulag_faust.post.dto.PostMapper;
 import com.sysc.bulag_faust.post.dto.PostResponse;
@@ -48,52 +48,28 @@ public class PostServiceImpl implements PostService {
     return postMapper.toResponse(post);
   }
 
-  public static <T> void findInvalidId(T category, T request) {
-    if (category.size() != request.categoryIds().size()) {
-
-      Set<UUID> foundIds = category.stream()
-          .map(Category::getId)
-          .collect(Collectors.toSet());
-
-      Set<UUID> missingIds = request.categoryIds()
-          .stream()
-          .filter(id -> !foundIds.contains(id))
-          .collect(Collectors.toSet());
-
-      throw new NotFoundException("Category", missingIds);
-    }
-  }
-
+  @Transactional
   @Override
   public PostResponse createDraft(@NotNull CreateDraftRequest request, UUID authorId) {
 
     User author = userRepository.getReferenceById(authorId);
 
-    Set<Category> category = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
-
-    if (category.size() != request.categoryIds().size()) {
-
-      Set<UUID> foundIds = category.stream()
-          .map(Category::getId)
-          .collect(Collectors.toSet());
-
-      Set<UUID> missingIds = request.categoryIds()
-          .stream()
-          .filter(id -> !foundIds.contains(id))
-          .collect(Collectors.toSet());
-
-      throw new NotFoundException("Category", missingIds);
-    }
-
+    Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
     Set<Tag> tags = new HashSet<>(tagRepository.findAllById(request.tagIds()));
+
+    EntityValidationUtils.vaidateAllFound(request.categoryIds(), categories, Category::getId,
+        "Category");
+    EntityValidationUtils.vaidateAllFound(request.tagIds(), tags, Tag::getId, "Tag");
 
     Post post = Post.builder().author(author)
         .title(request.title())
         .content(request.content())
         .status(PostStatus.DRAFT)
-        .categories(category)
+        .categories(categories)
         .tags(tags)
         .build();
+
+    return postMapper.toResponse(postRepository.save(post));
 
   }
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.core.response.ApiResponse;
+import com.sysc.bulag_faust.core.utils.AuthUtils;
 import com.sysc.bulag_faust.post.dto.PostResponse;
 import com.sysc.bulag_faust.post.dto.request.CreateDraftRequest;
 import com.sysc.bulag_faust.post.service.PostService;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 
   private final PostService postService;
+  private final AuthUtils authUtils;
 
   @GetMapping
   public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(@RequestParam(required = false) UUID categoryId,
@@ -44,9 +46,10 @@ public class PostController {
     return ResponseEntity.status(200).body(ApiResponse.success("Retrieved a post", post));
   }
 
-  @PostMapping
-  public ResponseEntity<ApiResponse<PostResponse>> createPost(@Valid @RequestBody CreateDraftRequest request) {
-    PostResponse post = postService.createDraft(request);
+  @PostMapping("/draft")
+  public ResponseEntity<ApiResponse<PostResponse>> createDraftPost(@Valid @RequestBody CreateDraftRequest request) {
+
+    PostResponse post = postService.createDraft(request, authUtils.getAuthenticateUserID());
     return ResponseEntity.status(201).body(ApiResponse.success("Created a post", post));
 
   }
