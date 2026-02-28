@@ -12,6 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -44,6 +46,12 @@ public class Category {
 
   public void updateName(String newName) {
     this.name = newName;
+  }
+
+  @PrePersist
+  @PreUpdate
+  protected void normalizeName() {
+    this.name = name.toLowerCase();
   }
 
   @Override

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +30,12 @@ public class GlobalExceptionHandler {
 
   // add spring exceptions
   // i.e. wrong paths etc
-  //
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ApiErrorResponse handleMessageNotReadable(HttpMessageNotReadableException ex) {
+    log.warn("Malformed JSON request: {}", ex.getMessage());
+    return buildErrorResponse("BAD_REQUEST", ex.getMessage());
+  }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)

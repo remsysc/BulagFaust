@@ -3,6 +3,7 @@ package com.sysc.bulag_faust.post.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -55,11 +56,10 @@ public class PostServiceImpl implements PostService {
     User author = userRepository.getReferenceById(authorId);
 
     Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
-    Set<Tag> tags = new HashSet<>(tagRepository.findAllById(request.tagIds()));
+    Set<Tag> tags = resolveOrCreateTags(request.tagNames());
 
     EntityValidationUtils.vaidateAllFound(request.categoryIds(), categories, Category::getId,
         "Category");
-    EntityValidationUtils.vaidateAllFound(request.tagIds(), tags, Tag::getId, "Tag");
 
     Post post = Post.builder().author(author)
         .title(request.title())
@@ -71,6 +71,14 @@ public class PostServiceImpl implements PostService {
 
     return postMapper.toResponse(postRepository.save(post));
 
+  }
+
+  private Set<Tag> resolveOrCreateTags(Set<String> tagNames) {
+    return tagNames.stream()
+        .map(name -> tagRepository.findByNameIgnoreCase(name)
+            .orElseGet(() -> tagRepository.save(
+                Tag.builder().name(name).build())))
+        .collect(Collectors.toSet());
   }
 
 }

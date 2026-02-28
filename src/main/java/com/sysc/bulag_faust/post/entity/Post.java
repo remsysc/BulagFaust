@@ -86,6 +86,11 @@ public class Post {
   private LocalDateTime updatedAt;
 
   private void setReadingTime() {
+    if (content == null || content.isBlank()) {
+      this.readingTime = 0; // handles empty content safely
+      return;
+    }
+
     int wordCount = this.content.split("\\s+").length;
     this.readingTime = (int) Math.ceil(wordCount / 200.0);
   }
@@ -96,6 +101,10 @@ public class Post {
     this.createdAt = LocalDateTime.now();
     this.updatedAt = null;
     setReadingTime();
+
+    this.title = (title == null || title.isBlank()) ? "Untitled" : title;
+    this.content = (title == null) ? "" : content;
+
   }
 
   @PreUpdate
