@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService {
 
   private Set<Tag> resolveOrCreateTags(Set<String> tagNames) {
     return tagNames.stream()
-        .map(name -> tagRepository.findByNameIgnoreCase(name)
+        .map(name -> tagRepository.findByName(name.toLowerCase().trim())
             .orElseGet(() -> tagRepository.save(
                 Tag.builder().name(name).build())))
         .collect(Collectors.toSet());
