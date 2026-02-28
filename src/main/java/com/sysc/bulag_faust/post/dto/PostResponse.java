@@ -20,13 +20,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PostResponse {
   private UUID id;
-  private UserResponse author;
+  private String author;
   private String title;
   private String content;
   private PostStatus status;
   private Integer readingTime;
-  private Set<CategoryResponse> categories;// TODO: CREATE CUSTOM RESPONSE WITHOUT COUNT
-  private Set<TagResponse> tags;
+  private Set<String> categories;// TODO: CREATE CUSTOM RESPONSE WITHOUT COUNT
+  private Set<String> tags;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
