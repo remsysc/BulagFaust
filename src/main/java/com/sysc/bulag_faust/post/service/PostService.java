@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.sysc.bulag_faust.post.dto.PostResponse;
-import com.sysc.bulag_faust.post.dto.request.CreateDraftRequest;
+import com.sysc.bulag_faust.post.dto.request.CreatePostRequest;
 
 public interface PostService {
 
@@ -12,5 +12,5 @@ public interface PostService {
 
   PostResponse getPostById(UUID id);
 
-  PostResponse createDraft(CreateDraftRequest request, UUID authorId);
+  PostResponse createPost(CreatePostRequest request, UUID authorId);
 }

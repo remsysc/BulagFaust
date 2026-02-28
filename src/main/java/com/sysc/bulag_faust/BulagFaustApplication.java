@@ -11,5 +11,6 @@ public class BulagFaustApplication {
 
     // LEARN: spring security and sql queries
     // TODO: add rate limiting, revocation, lockout mechanism
+    // TODO: add testing, JUNIT / mockito
   }
 }
