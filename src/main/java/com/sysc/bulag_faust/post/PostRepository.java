@@ -14,19 +14,15 @@ import com.sysc.bulag_faust.post.entity.Post;
 public interface PostRepository extends JpaRepository<Post, UUID> {
 
   @Query("""
-
           SELECT DISTINCT p FROM Post p
           JOIN FETCH p.author
           LEFT JOIN FETCH p.categories
-          LEFT JOIN FETCH p.tags
-
           WHERE (:categoryId IS NULL OR EXISTS(
-                SELECT 1 FROM p.categories c WHERE c.id = :categoryId))
+              SELECT 1 FROM p.categories c WHERE c.id = :categoryId))
           AND (:tagId IS NULL OR EXISTS(
-                SELECT 1 FROM p.tags t WHERE t.id = :tagId))
-
+              SELECT 1 FROM p.tags t WHERE t.id = :tagId))
       """)
-
-  List<Post> findAllByCategoryIdAndTagId(@Param("categoryId") UUID categoryId, @Param("tagId") UUID tagId);
+  List<Post> findAllWithCategories(@Param("categoryId") UUID categoryId,
+      @Param("tagId") UUID tagId);
 
 }

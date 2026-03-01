@@ -10,7 +10,6 @@ import com.sysc.bulag_faust.category.Category;
 import com.sysc.bulag_faust.category.CategoryRepository;
 import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
-import com.sysc.bulag_faust.category.mapper.CategoryCountDto;
 import com.sysc.bulag_faust.category.mapper.CategoryMapper;
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
@@ -28,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryMapper categoryMapper;
 
   @Override
-  public List<CategoryCountDto> getAllCategoriesWithCounts(PostStatus status) {
+  public List<CategoryResponse> getAllCategoriesWithCounts(PostStatus status) {
 
     return categoryRepository.findAllWithPublishedPostCounts(status);
 
@@ -42,8 +41,8 @@ public class CategoryServiceImpl implements CategoryService {
       throw new AlreadyExistException("Category", request.getName());
     }
 
-    Category category = categoryMapper.toEntity(request);
-    return categoryMapper.toDto(categoryRepository.save(category));
+    Category category = categoryRepository.save(categoryMapper.toEntity(request));
+    return new CategoryResponse(category.getId(), category.getName(), 0L);
 
   }
 

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
-import com.sysc.bulag_faust.category.mapper.CategoryCountDto;
 import com.sysc.bulag_faust.category.service.CategoryService;
 import com.sysc.bulag_faust.core.response.ApiResponse;
 import com.sysc.bulag_faust.post.entity.PostStatus;
@@ -33,10 +32,10 @@ public class CategoryController {
   private final CategoryService categoryService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<CategoryCountDto>>> getAllCategoriesWithPublishedCount(
+  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategoriesWithPublishedCount(
       @RequestParam(required = false, defaultValue = "PUBLISHED") PostStatus status) {
 
-    List<CategoryCountDto> category = categoryService.getAllCategoriesWithCounts(status);
+    List<CategoryResponse> category = categoryService.getAllCategoriesWithCounts(status);
 
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Categories retrieved", category));
   }
@@ -46,7 +45,7 @@ public class CategoryController {
       @Valid @RequestBody CreateCategoryRequest request) {
     CategoryResponse categoryResponse = categoryService.createCategory(request);
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(ApiResponse.success("Category: " + categoryResponse.getName() + " added", categoryResponse));
+        .body(ApiResponse.success("Category: " + categoryResponse.name() + " added", categoryResponse));
 
   }
 

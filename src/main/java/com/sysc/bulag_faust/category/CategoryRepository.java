@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.sysc.bulag_faust.category.mapper.CategoryCountDto;
+import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.post.entity.PostStatus;
 
 @Repository
@@ -19,8 +19,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
   // List<Category> findAll();
 
   @Query("""
-      SELECT new com.sysc.bulag_faust.category.mapper.CategoryCountDto
-
+      SELECT new com.sysc.bulag_faust.category.dto.CategoryResponse
       (
       c.id,
       c.name,
@@ -30,7 +29,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
       INNER JOIN c.posts p ON p.status = :status
       GROUP BY c.id, c.name
       """)
-  List<CategoryCountDto> findAllWithPublishedPostCounts(@Param("status") PostStatus status);
+  List<CategoryResponse> findAllWithPublishedPostCounts(@Param("status") PostStatus status);
 
   boolean existsByNameIgnoreCase(String name);
 

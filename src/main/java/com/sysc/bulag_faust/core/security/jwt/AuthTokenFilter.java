@@ -2,6 +2,7 @@ package com.sysc.bulag_faust.core.security.jwt;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -25,6 +26,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
   private final JwtUtils jwtUtils;
   private final SecurityUserDetailsService securityUserDetails;
+  private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -40,9 +42,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String token = parseJwt(request);
-    if (token == null) {
-      log.debug("Missing Authorization Header: {}", request.getRequestURI());
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    if (token == null || !jwtUtils.validateToken(token)) {
+      jwtAuthEntryPoint.commence(request, response,
+          new InsufficientAuthenticationException("Missing or invalid token"));
       return;
     }
     if (!jwtUtils.validateToken(token)) {

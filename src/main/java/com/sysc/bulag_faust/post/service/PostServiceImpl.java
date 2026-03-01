@@ -41,7 +41,7 @@ public class PostServiceImpl implements PostService {
 
   public List<PostResponse> getAllPosts(UUID categoryId, UUID tagId) {
 
-    return postMapper.toResponses(postRepository.findAllByCategoryIdAndTagId(categoryId, tagId));
+    return postMapper.toResponses(postRepository.findAllWithCategories(categoryId, tagId));
   }
 
   @Override
@@ -62,10 +62,6 @@ public class PostServiceImpl implements PostService {
     EntityValidationUtils.vaidateAllFound(request.categoryIds(), categories, Category::getId,
         "Category");
 
-    if (request.status() == PostStatus.PUBLISHED) {
-      validateForPublish(request);
-    }
-
     Post post = Post.builder().author(author)
         .title(request.title())
         .content(request.content())
@@ -73,6 +69,9 @@ public class PostServiceImpl implements PostService {
         .categories(categories)
         .tags(tags)
         .build();
+    if (request.status() == PostStatus.PUBLISHED) {
+      post.validateForPublish(request);
+    }
 
     // post.assignCategories(categories);
     // post.assignTags(tags);
@@ -90,23 +89,5 @@ public class PostServiceImpl implements PostService {
   }
 
   // TODO: add groupValidation
-  private void validateForPublish(CreatePostRequest request) {
-    List<String> errors = new ArrayList<>();
-
-    if (request.title() == null || request.title().isBlank()) {
-      errors.add("Title is required to publish");
-    }
-    if (request.content() == null || request.content().isBlank()) {
-      errors.add("Content is required to publish");
-    }
-    if (request.categoryIds() == null || request.categoryIds().isEmpty()) {
-      errors.add("At least one category is required to publish");
-    }
-
-    if (!errors.isEmpty()) {
-      throw new IllegalArgumentException(String.join(", ", errors));
-      // your GlobalExceptionHandler already handles this ✅
-    }
-  }
 
 }
