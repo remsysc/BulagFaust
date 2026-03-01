@@ -1,12 +1,14 @@
 package com.sysc.bulag_faust.post.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,9 +41,15 @@ public class PostServiceImpl implements PostService {
   private final CategoryRepository categoryRepository;
   private final TagRepository tagRepository;
 
-  public List<PostResponse> getAllPosts(UUID categoryId, UUID tagId) {
+  public Page<PostResponse> getAllPosts(UUID categoryId, UUID tagId, Pageable pageable) {
+    Page<UUID> idPage = postRepository.findPostIds(categoryId, tagId, pageable);
 
-    return postMapper.toResponses(postRepository.findAllByCategoryIdAndTagId(categoryId, tagId));
+    List<Post> posts = postRepository.findAllByIdIn(idPage.getContent());
+
+    return new PageImpl<>(
+        postMapper.toResponses(posts),
+        pageable,
+        idPage.getTotalElements());
   }
 
   @Override
@@ -58,12 +66,9 @@ public class PostServiceImpl implements PostService {
 
     Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
     Set<Tag> tags = resolveOrCreateTags(request.tagNames());
+
     EntityValidationUtils.vaidateAllFound(request.categoryIds(), categories, Category::getId,
         "Category");
-
-    if (request.status() == PostStatus.PUBLISHED) {
-      validateForPublish(request);
-    }
 
     Post post = Post.builder().author(author)
         .title(request.title())
@@ -72,37 +77,41 @@ public class PostServiceImpl implements PostService {
         .categories(categories)
         .tags(tags)
         .build();
+    if (request.status() == PostStatus.PUBLISHED) {
+      post.validateForPublish(request);
+    }
+
+    // post.assignCategories(categories);
+    // post.assignTags(tags);
 
     return postMapper.toResponse(postRepository.save(post));
 
   }
 
   private Set<Tag> resolveOrCreateTags(Set<String> tagNames) {
-    return tagNames.stream()
-        .map(name -> tagRepository.findByName(name.toLowerCase().trim())
-            .orElseGet(() -> tagRepository.save(
-                Tag.builder().name(name).build())))
+    Set<String> normalized = tagNames.stream()
+        .map(name -> name.toLowerCase().trim())
         .collect(Collectors.toSet());
+
+    // 1 SELECT for all existing tags
+    List<Tag> existing = tagRepository.findAllByNameIn(normalized);
+    Set<String> existingNames = existing.stream()
+        .map(Tag::getName)
+        .collect(Collectors.toSet());
+
+    // Only INSERT the ones that don't exist
+    List<Tag> newTags = normalized.stream()
+        .filter(name -> !existingNames.contains(name))
+        .map(name -> Tag.builder().name(name).build())
+        .collect(Collectors.toList());
+
+    if (!newTags.isEmpty()) {
+      existing.addAll(tagRepository.saveAll(newTags)); // 1 batch INSERT
+    }
+
+    return new HashSet<>(existing);
   }
 
   // TODO: add groupValidation
-  private void validateForPublish(CreatePostRequest request) {
-    List<String> errors = new ArrayList<>();
-
-    if (request.title() == null || request.title().isBlank()) {
-      errors.add("Title is required to publish");
-    }
-    if (request.content() == null || request.content().isBlank()) {
-      errors.add("Content is required to publish");
-    }
-    if (request.categoryIds() == null || request.categoryIds().isEmpty()) {
-      errors.add("At least one category is required to publish");
-    }
-
-    if (!errors.isEmpty()) {
-      throw new IllegalArgumentException(String.join(", ", errors));
-      // your GlobalExceptionHandler already handles this ✅
-    }
-  }
 
 }

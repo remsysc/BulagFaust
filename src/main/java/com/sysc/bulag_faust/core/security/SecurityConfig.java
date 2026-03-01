@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -43,10 +44,12 @@ public class SecurityConfig {
             exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint).accessDeniedHandler(accessDeniedHandler))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/api/v1/auth/**").permitAll() // ← /api/v1/auth/login
-            .requestMatchers("/api/v1/categories/**").authenticated() // ← /api/v1/category
-            .requestMatchers("/api/v1/tags/**").authenticated()
-            .requestMatchers("/api/v1/posts/**").authenticated()
+            .requestMatchers("/api/v1/auth/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll() // public reads
+            .requestMatchers(HttpMethod.GET, "/api/v1/tags/**").permitAll() // public reads
+            .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+            .requestMatchers("/api/v1/posts/**").authenticated() // writes require auth
+            .requestMatchers("/api/v1/admin/**").hasRole("ADMIN") // role-based
             .anyRequest().denyAll())
         .authenticationProvider(daoAuthenticationProvider)
         .addFilterBefore(authTokenFilter,

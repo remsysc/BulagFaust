@@ -1,12 +1,17 @@
 package com.sysc.bulag_faust.post.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sysc.bulag_faust.category.Category;
+import com.sysc.bulag_faust.post.dto.request.CreatePostRequest;
 import com.sysc.bulag_faust.tag.Tag;
 import com.sysc.bulag_faust.user.User;
 
@@ -26,6 +31,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Index;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,7 +47,11 @@ import lombok.experimental.Accessors;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "posts")
+@Table(name = "posts", indexes = {
+    @Index(name = "idx_post_status", columnList = "status"),
+    @Index(name = "idx_post_author", columnList = "author_id"),
+    @Index(name = "idx_post_created", columnList = "created_at")
+})
 public class Post {
 
   @Id
@@ -77,7 +87,7 @@ public class Post {
   @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   @JoinTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   @Builder.Default
-  @JsonIgnore
+  @BatchSize(size = 25)
   private Set<Tag> tags = new HashSet<>();
 
   @Column(nullable = false, updatable = false)
@@ -95,6 +105,33 @@ public class Post {
     this.readingTime = (int) Math.ceil(wordCount / 200.0);
   }
 
+  public void validateForPublish(CreatePostRequest request) {
+    List<String> errors = new ArrayList<>();
+
+    if (request.title() == null || request.title().isBlank()) {
+      errors.add("Title is required to publish");
+    }
+    if (request.content() == null || request.content().isBlank()) {
+      errors.add("Content is required to publish");
+    }
+    if (request.categoryIds() == null || request.categoryIds().isEmpty()) {
+      errors.add("At least one category is required to publish");
+    }
+
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException(String.join(", ", errors));
+      // your GlobalExceptionHandler already handles this ✅
+    }
+  }
+
+  // public void assignCategories(Set<Category> categories) {
+  // this.categories = categories != null ? categories : new HashSet<>();
+  // }
+  //
+  // public void assignTags(Set<Tag> Tags) {
+  // this.tags = tags != null ? tags : new HashSet<>();
+  // }
+  //
   // ONLY repository.save() triggers them
   @PrePersist
   protected void onCreate() {
@@ -103,7 +140,7 @@ public class Post {
     setReadingTime();
 
     this.title = (title == null || title.isBlank()) ? "Untitled" : title;
-    this.content = (title == null) ? "" : content;
+    this.content = (content == null) ? "" : content;
 
   }
 

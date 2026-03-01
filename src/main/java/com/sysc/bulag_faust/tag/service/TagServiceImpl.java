@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
+import com.sysc.bulag_faust.post.entity.PostStatus;
 import com.sysc.bulag_faust.tag.Tag;
 import com.sysc.bulag_faust.tag.TagRepository;
 import com.sysc.bulag_faust.tag.dto.CreateTagRequest;
@@ -33,8 +34,8 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public List<TagResponse> getAllTags() {
-    return tagRepository.findAllWithPostCount();
+  public List<TagResponse> getAllTagsWithPostCount(PostStatus status) {
+    return tagRepository.findAllWithPostCount(status);
   }
 
   @Transactional

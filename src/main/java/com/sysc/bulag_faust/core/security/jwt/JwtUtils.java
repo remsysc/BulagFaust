@@ -84,8 +84,8 @@ public class JwtUtils {
           .getSubject();
 
     } catch (JwtException e) {
-      log.debug("Cannot get username from token: {}", e.getMessage());
-      throw new RuntimeException();
+      log.warn("Cannot extract username from token: {}", e.getMessage());
+      throw new RuntimeException("Failed to extract username from JWT token", e);
     }
 
   }

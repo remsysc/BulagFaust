@@ -7,17 +7,16 @@ import org.springframework.stereotype.Component;
 
 import com.sysc.bulag_faust.core.security.user.SecurityUserDetails;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class AuthUtils {
 
   public UUID getAuthenticateUserID() {
     SecurityUserDetails userDetails = (SecurityUserDetails) SecurityContextHolder
         .getContext().getAuthentication().getPrincipal();
-
-    // ADD THIS
-    System.out.println("User ID: " + userDetails.getId());
-    System.out.println("User email: " + userDetails.getUsername());
-
+    log.debug("Authenticated user ID: {}", userDetails.getId());
     return userDetails.getId();
   }
 }

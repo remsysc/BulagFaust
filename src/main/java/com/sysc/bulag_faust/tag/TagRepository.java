@@ -2,6 +2,7 @@ package com.sysc.bulag_faust.tag;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.sysc.bulag_faust.post.entity.PostStatus;
 import com.sysc.bulag_faust.tag.dto.TagResponse;
 
 @Repository
@@ -37,10 +39,10 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
       COUNT(p)
       )
       FROM Tag t
-      LEFT JOIN t.posts p ON p.status = 'PUBLISHED'
+      INNER JOIN t.posts p ON p.status = :status
       GROUP BY t.id, t.name
       """)
-  List<TagResponse> findAllWithPostCount();
+  List<TagResponse> findAllWithPostCount(@Param("status") PostStatus status);
 
   boolean existsByIdAndPostsIsNotEmpty(UUID id);
 
@@ -49,5 +51,7 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
   Optional<Tag> findByName(String name);
 
   boolean existsByNameIgnoreCase(String name);
+
+  List<Tag> findAllByNameIn(Set<String> normalized);
 
 }
