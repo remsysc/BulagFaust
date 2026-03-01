@@ -95,6 +95,14 @@ public class Post {
     this.readingTime = (int) Math.ceil(wordCount / 200.0);
   }
 
+  // public void assignCategories(Set<Category> categories) {
+  // this.categories = categories != null ? categories : new HashSet<>();
+  // }
+  //
+  // public void assignTags(Set<Tag> Tags) {
+  // this.tags = tags != null ? tags : new HashSet<>();
+  // }
+  //
   // ONLY repository.save() triggers them
   @PrePersist
   protected void onCreate() {

@@ -27,14 +27,10 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
       COUNT(p)
       )
       FROM Category c
-      LEFT JOIN c.posts p
-      WHERE p.status = 'PUBLISHED'
+      INNER JOIN c.posts p ON p.status = :status
       GROUP BY c.id, c.name
       """)
-  List<CategoryCountDto> findAllWithPublishedPostCounts();
-
-  @Query("SELECT  c FROM Category c LEFT JOIN FETCH c.posts p WHERE p.status = :status")
-  List<Category> findAllWithPublishedPosts(@Param("status") PostStatus status);
+  List<CategoryCountDto> findAllWithPublishedPostCounts(@Param("status") PostStatus status);
 
   boolean existsByNameIgnoreCase(String name);
 

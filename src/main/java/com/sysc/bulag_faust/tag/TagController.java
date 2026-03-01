@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.core.response.ApiResponse;
+import com.sysc.bulag_faust.post.entity.PostStatus;
 import com.sysc.bulag_faust.tag.dto.CreateTagRequest;
 import com.sysc.bulag_faust.tag.dto.TagResponse;
 import com.sysc.bulag_faust.tag.service.TagService;
@@ -28,8 +30,9 @@ public class TagController {
   private final TagService tagService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<TagResponse>>> getAllTagsWithPublishedPost() {
-    List<TagResponse> tags = tagService.getAllTags();
+  public ResponseEntity<ApiResponse<List<TagResponse>>> getAllTagsWithPublishedPost(
+      @RequestParam(required = false, defaultValue = "PUBLISHED") PostStatus status) {
+    List<TagResponse> tags = tagService.getAllTagsWithPostCount(status);
     return ResponseEntity.status(200).body(ApiResponse.success("Retrieved all tags", tags));
   }
 

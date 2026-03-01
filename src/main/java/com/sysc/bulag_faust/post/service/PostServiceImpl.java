@@ -58,6 +58,7 @@ public class PostServiceImpl implements PostService {
 
     Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
     Set<Tag> tags = resolveOrCreateTags(request.tagNames());
+
     EntityValidationUtils.vaidateAllFound(request.categoryIds(), categories, Category::getId,
         "Category");
 
@@ -72,6 +73,9 @@ public class PostServiceImpl implements PostService {
         .categories(categories)
         .tags(tags)
         .build();
+
+    // post.assignCategories(categories);
+    // post.assignTags(tags);
 
     return postMapper.toResponse(postRepository.save(post));
 
