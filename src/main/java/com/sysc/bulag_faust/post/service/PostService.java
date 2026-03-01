@@ -1,14 +1,16 @@
 package com.sysc.bulag_faust.post.service;
 
-import java.util.List;
 import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.sysc.bulag_faust.post.dto.PostResponse;
 import com.sysc.bulag_faust.post.dto.request.CreatePostRequest;
 
 public interface PostService {
 
-  List<PostResponse> getAllPosts(UUID categoryId, UUID tagId);
+  Page<PostResponse> getAllPosts(UUID categoryId, UUID tagId, Pageable pageable);
 
   PostResponse getPostById(UUID id);
 

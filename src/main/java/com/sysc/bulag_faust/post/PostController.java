@@ -1,9 +1,12 @@
 
 package com.sysc.bulag_faust.post;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.core.response.ApiResponse;
+import com.sysc.bulag_faust.core.response.PageResponse;
 import com.sysc.bulag_faust.core.utils.AuthUtils;
 import com.sysc.bulag_faust.post.dto.PostResponse;
 import com.sysc.bulag_faust.post.dto.request.CreatePostRequest;
@@ -30,11 +34,15 @@ public class PostController {
   private final PostService postService;
   private final AuthUtils authUtils;
 
+  // PostController.java
   @GetMapping
-  public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(@RequestParam(required = false) UUID categoryId,
-      @RequestParam(required = false) UUID tagId) {
-    List<PostResponse> posts = postService.getAllPosts(categoryId, tagId);
-    return ResponseEntity.status(200).body(ApiResponse.success("Retrieved all posts", posts));
+  public ResponseEntity<ApiResponse<PageResponse<PostResponse>>> getAllPosts(
+      @RequestParam(required = false) UUID categoryId,
+      @RequestParam(required = false) UUID tagId,
+      @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+    Page<PostResponse> posts = postService.getAllPosts(categoryId, tagId, pageable);
+    return ResponseEntity.ok(ApiResponse.success("Retrieved all posts", PageResponse.from(posts)));
   }
 
   @GetMapping("/{id}")

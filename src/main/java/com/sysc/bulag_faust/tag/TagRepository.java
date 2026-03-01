@@ -2,6 +2,7 @@ package com.sysc.bulag_faust.tag;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,5 +51,7 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
   Optional<Tag> findByName(String name);
 
   boolean existsByNameIgnoreCase(String name);
+
+  List<Tag> findAllByNameIn(Set<String> normalized);
 
 }

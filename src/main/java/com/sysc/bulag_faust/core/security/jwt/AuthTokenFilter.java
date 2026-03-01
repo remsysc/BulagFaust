@@ -2,6 +2,7 @@ package com.sysc.bulag_faust.core.security.jwt;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
 
+  @Value("${api.prefix}")
+  private String apiPrefix;
   private final JwtUtils jwtUtils;
   private final SecurityUserDetailsService securityUserDetails;
   private final JwtAuthEntryPoint jwtAuthEntryPoint;
@@ -32,7 +35,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     String path = request.getServletPath();
     // Skip filter for public endpoints
-    boolean shouldSkip = path.startsWith("/api/v1/auth");
+    boolean shouldSkip = path.startsWith(apiPrefix + "/auth");
     log.info("Path: {}, Should skip filter: {}", path, shouldSkip);
     return shouldSkip;
   }
@@ -42,17 +45,16 @@ public class AuthTokenFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String token = parseJwt(request);
-    if (token == null || !jwtUtils.validateToken(token)) {
+    if (token == null) {
       jwtAuthEntryPoint.commence(request, response,
-          new InsufficientAuthenticationException("Missing or invalid token"));
+          new InsufficientAuthenticationException("Missing token"));
       return;
     }
     if (!jwtUtils.validateToken(token)) {
-      log.warn("Invalid JWT token for URI: {}", request.getRequestURI());
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      jwtAuthEntryPoint.commence(request, response,
+          new InsufficientAuthenticationException("Invalid token"));
       return;
     }
-
     String username = jwtUtils.getUsernameFromToken(token);
     var userDetails = securityUserDetails.loadUserByUsername(username);
     var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());// null because
