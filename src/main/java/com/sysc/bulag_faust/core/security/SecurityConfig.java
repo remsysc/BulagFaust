@@ -50,7 +50,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
             .requestMatchers("/api/v1/posts/**").authenticated() // writes require auth
             .requestMatchers("/api/v1/admin/**").hasRole("ADMIN") // role-based
-            .anyRequest().denyAll())
+            .anyRequest().authenticated())
         .authenticationProvider(daoAuthenticationProvider)
         .addFilterBefore(authTokenFilter,
             UsernamePasswordAuthenticationFilter.class);

@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public CategoryResponse updateCategory(@NonNull UUID id, @NonNull CreateCategoryRequest request) {
     if (categoryRepository.existsByNameIgnoreCaseAndIdNot(request.getName(), id)) {
-      throw new AlreadyExistException("Category", id);
+      throw new AlreadyExistException("Category", request.getName());
     }
     Category existing = getCategoryEntityById(id);
 

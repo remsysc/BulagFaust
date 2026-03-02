@@ -22,7 +22,7 @@ public class PostResponse {
   private String content;
   private PostStatus status;
   private Integer readingTime;
-  private Set<String> categories;// TODO: CREATE CUSTOM RESPONSE WITHOUT COUNT
+  private Set<String> categories;
   private Set<String> tags;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
