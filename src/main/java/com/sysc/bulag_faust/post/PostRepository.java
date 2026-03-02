@@ -42,4 +42,8 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
           WHERE p.id IN :ids
       """)
   List<Post> findAllByIdIn(@Param("ids") List<UUID> ids);
+
+  @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Post p WHERE p.id = :postId AND p.author.id = :authorId")
+  boolean existsByIdAndAuthorId(@Param("postId") UUID postId, @Param("authorId") UUID authorId);
+
 }

@@ -11,7 +11,6 @@ import org.hibernate.annotations.BatchSize;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sysc.bulag_faust.category.Category;
-import com.sysc.bulag_faust.post.dto.request.CreatePostRequest;
 import com.sysc.bulag_faust.tag.Tag;
 import com.sysc.bulag_faust.user.User;
 
@@ -87,13 +86,15 @@ public class Post {
   @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   @JoinTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   @Builder.Default
-  @BatchSize(size = 25)
+  @JsonIgnore
+  @BatchSize(size = 20)
   private Set<Tag> tags = new HashSet<>();
 
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   private LocalDateTime updatedAt;
+  private static final int MAX_TAGS = 20;
 
   private void setReadingTime() {
     if (content == null || content.isBlank()) {
@@ -105,32 +106,51 @@ public class Post {
     this.readingTime = (int) Math.ceil(wordCount / 200.0);
   }
 
-  public void validateForPublish(CreatePostRequest request) {
+  private void validateForPublish() {
     List<String> errors = new ArrayList<>();
 
-    if (request.title() == null || request.title().isBlank()) {
+    if (this.title == null || this.title.isBlank())
       errors.add("Title is required to publish");
-    }
-    if (request.content() == null || request.content().isBlank()) {
-      errors.add("Content is required to publish");
-    }
-    if (request.categoryIds() == null || request.categoryIds().isEmpty()) {
-      errors.add("At least one category is required to publish");
-    }
 
-    if (!errors.isEmpty()) {
+    if (this.content == null || this.content.isBlank())
+      errors.add("Content is required to publish");
+
+    if (this.categories == null || this.categories.isEmpty())
+      errors.add("At least one category is required to publish");
+
+    if (!errors.isEmpty())
       throw new IllegalArgumentException(String.join(", ", errors));
-      // your GlobalExceptionHandler already handles this ✅
-    }
   }
 
-  // public void assignCategories(Set<Category> categories) {
-  // this.categories = categories != null ? categories : new HashSet<>();
-  // }
-  //
-  // public void assignTags(Set<Tag> Tags) {
-  // this.tags = tags != null ? tags : new HashSet<>();
-  // }
+  public void updates(String title, String content, PostStatus status) {
+    if (title != null)
+      this.title = title;
+    if (content != null)
+      this.content = content;
+
+    if (status != null)
+      this.status = status;
+    if (this.status.equals(PostStatus.PUBLISHED))
+      validateForPublish();
+  }
+
+  public void assignCategories(Set<Category> categories) {
+    this.categories = categories != null ? categories : new HashSet<>();
+  }
+
+  public void assignTags(Set<Tag> tags) {
+    if (tags != null && tags.size() > MAX_TAGS) {
+      throw new IllegalArgumentException(
+          "A post cannot have more than " + MAX_TAGS + " tags");
+    }
+    this.tags = tags != null ? tags : new HashSet<>();
+  }
+
+  public void publish() {
+    this.status = PostStatus.PUBLISHED;
+    validateForPublish();
+  }
+
   //
   // ONLY repository.save() triggers them
   @PrePersist

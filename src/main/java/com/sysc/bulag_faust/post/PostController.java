@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import com.sysc.bulag_faust.core.response.PageResponse;
 import com.sysc.bulag_faust.core.utils.AuthUtils;
 import com.sysc.bulag_faust.post.dto.PostResponse;
 import com.sysc.bulag_faust.post.dto.request.CreatePostRequest;
+import com.sysc.bulag_faust.post.dto.request.UpdatePostRequest;
 import com.sysc.bulag_faust.post.service.PostService;
 
 import jakarta.validation.Valid;
@@ -58,5 +60,12 @@ public class PostController {
   }
 
   // TODO: add CRUD
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<ApiResponse<PostResponse>> updatePost(@PathVariable UUID id,
+      @Valid @RequestBody UpdatePostRequest request) {
+    PostResponse response = postService.updatePost(request, id, authUtils.getAuthenticateUserID());
+    return ResponseEntity.status(200).body(ApiResponse.success("Post updated", response));
+  }
 
 }
