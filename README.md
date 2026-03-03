@@ -7,7 +7,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=for-the-badge&logo=postgresql)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-**A production-ready RESTful blog platform built with Spring Boot 3**
+**A RESTful blog platform built with Spring Boot 3**
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [API Documentation](#-api-documentation) • [Project Highlights](#-project-highlights) • [Future Roadmap](#-future-roadmap)
 
