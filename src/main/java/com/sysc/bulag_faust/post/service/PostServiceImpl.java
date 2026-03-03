@@ -44,15 +44,13 @@ public class PostServiceImpl implements PostService {
   private final TagRepository tagRepository;
 
   @Override
-  public Page<PostResponse> getAllPosts(UUID categoryId, UUID tagId, Pageable pageable) {
-    Page<UUID> idPage = postRepository.findPostIds(categoryId, tagId, pageable);
-
-    List<Post> posts = postRepository.findAllByIdIn(idPage.getContent());
+  public Page<PostResponse> getAllPosts(UUID categoryId, UUID tagId, UUID authorId, Pageable pageable) {
+    Page<Post> postPage = postRepository.findAllVisibleToUser(authorId, categoryId, tagId, pageable);
 
     return new PageImpl<>(
-        postMapper.toResponses(posts),
+        postMapper.toResponses(postPage.getContent()),
         pageable,
-        idPage.getTotalElements());
+        postPage.getTotalElements());
   }
 
   @Override
@@ -69,18 +67,24 @@ public class PostServiceImpl implements PostService {
     Post post = Post.builder().author(author)
         .title(request.title())
         .content(request.content())
-        .status(request.status())
+        .status(PostStatus.DRAFT)
         .build();
-    if (request.status() == PostStatus.PUBLISHED) {
-      Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
-      Set<Tag> tags = resolveOrCreateTags(request.tagNames());
 
-      EntityValidationUtils.vaidateAllFound(request.categoryIds(), categories, Category::getId,
-          "Category");
+    if (request.categoryIds() != null && !request.categoryIds().isEmpty()) {
+      Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.categoryIds()));
+      EntityValidationUtils.vaidateAllFound(request.categoryIds(),
+          categories, Category::getId, "Category");
       post.assignCategories(categories);
+    }
+    if (request.tagNames() != null && !request.tagNames().isEmpty()) {
+      Set<Tag> tags = resolveOrCreateTags(request.tagNames());
       post.assignTags(tags);
+    }
+
+    if (request.status() == PostStatus.PUBLISHED) {
       post.publish();
     }
+
     return postMapper.toResponse(postRepository.save(post));
   }
 

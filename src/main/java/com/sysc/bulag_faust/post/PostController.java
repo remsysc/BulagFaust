@@ -45,7 +45,7 @@ public class PostController {
       @RequestParam(required = false) UUID tagId,
       @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-    Page<PostResponse> posts = postService.getAllPosts(categoryId, tagId, pageable);
+    Page<PostResponse> posts = postService.getAllPosts(categoryId, tagId, authUtils.getAuthenticateUserID(), pageable);
     return ResponseEntity.ok(ApiResponse.success("Retrieved all posts", PageResponse.from(posts)));
   }
 
