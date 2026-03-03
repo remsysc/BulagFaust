@@ -30,18 +30,24 @@ public class DataSeederService {
 
   @Transactional
   public void seed() {
-    Role adminRole = findOrCreateRole("ROLE_ADMIN");
+    // Seed roles
+    findOrCreateRole("ROLE_ADMIN");
     findOrCreateRole("ROLE_USER");
     log.info("✓ Roles seeded");
+
+    // Create admin user - re-fetch to ensure managed entity
     if (!userRepository.existsByEmail(adminEmail)) {
+      Role adminRoleManaged = roleRepository.findByName("ROLE_ADMIN")
+          .orElseThrow(() -> new IllegalStateException("ROLE_ADMIN not found"));
+
       User admin = User.builder()
           .username("admin")
           .email(adminEmail)
           .password(passwordEncoder.encode(password))
-          .roles(Set.of(adminRole)) // already managed within this transaction ✅
+          .roles(Set.of(adminRoleManaged))
           .build();
       userRepository.save(admin);
-      log.info("✓ Default admin user created");
+      log.info("✓ Default admin user created: {}");
     }
   }
 
