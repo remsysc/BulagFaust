@@ -459,130 +459,40 @@ Controller → Service → Repository → Entity
 
 ## 🚀 Future Roadmap (API v2)
 
-### Phase 1: Security Hardening (Q2 2026)
+### Security & Performance
 
-#### 🔐 Rate Limiting with Redis
-```java
-// Planned implementation
-@RateLimit(limit = 5, window = "1m") // 5 attempts per minute
-@PostMapping("/login")
-public ResponseEntity<ApiResponse<AuthResponse>> login(...)
-```
+| Feature | Why |
+|---------|-----|
+| **Redis Rate Limiting** | Prevent API abuse and DDoS attacks by limiting requests per user/IP |
+| **Account Lockout Mechanism** | Protect against brute force attacks by locking accounts after failed login attempts |
+| **Redis Caching** | Reduce database load and improve response times for frequently accessed data |
 
-**Features:**
-- Redis-based distributed rate limiting
-- Configurable limits per endpoint
-- Sliding window algorithm
-- Custom headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`
+### Testing
 
-#### 🔒 Account Lockout Mechanism
-```java
-// Planned implementation
-@Lockout(threshold = 5, duration = "15m")
-@PostMapping("/login")
-public ResponseEntity<ApiResponse<AuthResponse>> login(...)
-```
+| Feature | Why |
+|---------|-----|
+| **JUnit 5** | Write unit tests to verify business logic and catch regressions early |
+| **Mockito** | Mock dependencies for isolated, fast unit testing |
+| **TestContainers** | Run integration tests against real PostgreSQL instances in Docker |
+| **MockMvc** | Test REST controllers without starting the full server |
 
-**Features:**
-- Lock account after 5 failed attempts
-- 15-minute lockout duration
-- Automatic unlock with exponential backoff
-- Email notification on lockout
+### API v2 Features
 
-### Phase 2: Testing Infrastructure (Q2 2026)
+| Feature | Why |
+|---------|-----|
+| **Comments System** | Enable user engagement and discussions on blog posts |
+| **Reactions/Likes** | Allow readers to express appreciation without writing comments |
+| **User Analytics** | Provide insights on post performance and reader engagement |
+| **Image Upload** | Support rich content with embedded images in posts |
+| **Full-Text Search** | Help users find relevant content quickly across all posts |
 
-#### ✅ JUnit 5 + Mockito
-```java
-// Planned test structure
-@SpringBootTest
-@AutoConfigureMockMvc
-class PostControllerIntegrationTest {
-    
-    @MockBean
-    private PostService postService;
-    
-    @Test
-    @WithMockUser
-    void shouldCreatePost_WhenValidRequest() {
-        // Test implementation
-    }
-}
-```
 
-**Coverage Goals:**
-- 80%+ unit test coverage for services
-- Integration tests for all REST endpoints
-- Test containers for PostgreSQL integration
-- MockMvc for controller testing
-- ArgumentCaptor for complex validations
+### Database & Code Quality
 
-#### 🧪 Test Categories
-| Type | Framework | Target |
-|------|-----------|--------|
-| Unit Tests | JUnit 5 + Mockito | Services, Utils |
-| Integration Tests | TestContainers + Spring Boot Test | Repositories, Controllers |
-| Contract Tests | Spring Cloud Contract | API contracts |
-| Performance Tests | Gatling | Load testing |
-
-### Phase 3: Performance & Scalability (Q3 2026)
-
-#### 📦 Redis Caching
-```java
-// Planned implementation
-@Cacheable(value = "posts", key = "#id")
-public PostResponse getPostById(UUID id)
-
-@CacheEvict(value = "posts", key = "#postId")
-public PostResponse updatePost(...)
-```
-
-**Cache Strategy:**
-- Posts: 5-minute TTL
-- Categories/Tags: 30-minute TTL
-- Write-through cache for frequently accessed data
-- Cache-aside pattern for reads
-
-#### 📊 Database Optimization
-- Query plan analysis with EXPLAIN ANALYZE
-- Connection pooling with HikariCP tuning
-- Read replicas for GET endpoints
-- Database-level caching
-
-### Phase 4: API v2 Features (Q3 2026)
-
-#### 🌐 New Endpoints
-```
-GET    /api/v2/posts/{id}/comments     # Comments system
-POST   /api/v2/posts/{id}/like         # Reactions
-GET    /api/v2/users/{id}/stats        # User analytics
-POST   /api/v2/media/upload            # Image uploads
-GET    /api/v2/search                  # Full-text search
-```
-
-#### 📈 Analytics & Metrics
-- Post view counts
-- Reading completion tracking
-- User engagement metrics
-- Popular tags/categories
-
-#### 🔔 Notifications
-- Email notifications for comments
-- Push notifications (WebSocket)
-- Digest emails for followers
-
-### Phase 5: DevOps & Monitoring (Q4 2026)
-
-#### 📊 Observability Stack
-- **Metrics**: Micrometer + Prometheus + Grafana
-- **Logging**: ELK Stack (Elasticsearch, Logstash, Kibana)
-- **Tracing**: Spring Cloud Sleuth + Zipkin
-- **Health Checks**: Spring Boot Actuator
-
-#### 🚀 CI/CD Pipeline
-```yaml
-# Planned GitHub Actions workflow
-- Unit Tests → Integration Tests → Build → Docker → Deploy
-```
+| Feature | Why |
+|---------|-----|
+| **Flyway/Liquibase** | Version control database schema changes and enable safe rollbacks |
+| **OpenAPI/Swagger** | Auto-generated API documentation for easier frontend integration |
 
 ---
 
@@ -634,25 +544,16 @@ GET    /api/v2/search                  # Full-text search
 ## 👨‍💻 Author
 
 **Developed by:** Rem
-**Project:** BulagFaust - Spring Boot Blog Platform  
-**Learning Journey:** From Spring Boot beginner to  backend developer
+**Project:** BulagFaust - Spring Boot Blog Platform 
 
-### Key Takeaways
 
-> "This project taught me that building a backend isn't just about making endpoints work—it's about designing for **maintainability**, **scalability**, and **security** from day one. Every mistake became a lesson, and every lesson became a better decision."
+
 
 ---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- Spring Boot community for excellent documentation
-- PostgreSQL team for the robust database system
 
 ---
 
