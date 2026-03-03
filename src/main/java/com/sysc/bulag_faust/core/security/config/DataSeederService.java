@@ -2,6 +2,7 @@ package com.sysc.bulag_faust.core.security.config;
 
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,19 +23,21 @@ public class DataSeederService {
   private final RoleRepository roleRepository;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  @Value("${admin.email}")
+  private String adminEmail;
+  @Value("${admin.password}")
+  private String password;
 
   @Transactional
   public void seed() {
     Role adminRole = findOrCreateRole("ROLE_ADMIN");
     findOrCreateRole("ROLE_USER");
     log.info("✓ Roles seeded");
-
-    String adminEmail = "admin@localhost";
     if (!userRepository.existsByEmail(adminEmail)) {
       User admin = User.builder()
           .username("admin")
           .email(adminEmail)
-          .password(passwordEncoder.encode("admin123"))
+          .password(passwordEncoder.encode(password))
           .roles(Set.of(adminRole)) // already managed within this transaction ✅
           .build();
       userRepository.save(admin);
