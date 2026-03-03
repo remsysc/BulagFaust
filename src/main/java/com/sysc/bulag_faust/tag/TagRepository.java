@@ -5,22 +5,22 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.sysc.bulag_faust.post.entity.PostStatus;
 import com.sysc.bulag_faust.tag.dto.TagResponse;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, UUID> {
 
-  // INFO: DO NOT FORGET TO CHANGE TH FILE PATH BELOW TOO
   @Query("""
       SELECT new com.sysc.bulag_faust.tag.dto.TagResponse
-
-      ( t.id,
+      (
+      t.id,
       t.name,
       COUNT(p)
       )
@@ -33,16 +33,16 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
 
   @Query("""
       SELECT new com.sysc.bulag_faust.tag.dto.TagResponse
-
-      ( t.id,
+      (
+      t.id,
       t.name,
       COUNT(p)
       )
       FROM Tag t
-      INNER JOIN t.posts p ON p.status = :status
+      LEFT JOIN t.posts p
       GROUP BY t.id, t.name
       """)
-  List<TagResponse> findAllWithPostCount(@Param("status") PostStatus status);
+  Page<TagResponse> findAllWithPostCount(Pageable pageable);
 
   boolean existsByIdAndPostsIsNotEmpty(UUID id);
 
@@ -53,5 +53,4 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
   boolean existsByNameIgnoreCase(String name);
 
   List<Tag> findAllByNameIn(Set<String> normalized);
-
 }

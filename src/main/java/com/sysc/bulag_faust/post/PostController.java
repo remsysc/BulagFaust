@@ -41,10 +41,11 @@ public class PostController {
   // PostController.java
   @GetMapping
   public ResponseEntity<ApiResponse<PageResponse<PostResponse>>> getAllPosts(
-      @RequestParam(required = false) UUID categoryId,
-      @RequestParam(required = false) UUID tagId,
+      @RequestParam(required = false) UUID categoryId, @RequestParam(required = false) UUID tagId, // TODO: maybe allow
+                                                                                                   // multiple tags
+                                                                                                   // filtering
       @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-
+    // FIX: public viewing doesnt need authentication
     Page<PostResponse> posts = postService.getAllPosts(categoryId, tagId, authUtils.getAuthenticateUserID(), pageable);
     return ResponseEntity.ok(ApiResponse.success("Retrieved all posts", PageResponse.from(posts)));
   }

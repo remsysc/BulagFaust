@@ -1,19 +1,19 @@
 package com.sysc.bulag_faust.tag.service;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
-import com.sysc.bulag_faust.post.entity.PostStatus;
+import com.sysc.bulag_faust.core.response.PageResponse;
 import com.sysc.bulag_faust.tag.Tag;
 import com.sysc.bulag_faust.tag.TagRepository;
 import com.sysc.bulag_faust.tag.dto.CreateTagRequest;
 import com.sysc.bulag_faust.tag.dto.TagResponse;
-import com.sysc.bulag_faust.tag.mapper.TagMapper;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +24,12 @@ import lombok.RequiredArgsConstructor;
 public class TagServiceImpl implements TagService {
 
   private final TagRepository tagRepository;
-  private final TagMapper tagMapper;
 
   @Override
   public TagResponse getTagById(UUID id) {
     return tagRepository.findTagByIdWithPostCount(id).orElseThrow(
         () -> new NotFoundException("Tag", id));
 
-  }
-
-  @Override
-  public List<TagResponse> getAllTagsWithPostCount(PostStatus status) {
-    return tagRepository.findAllWithPostCount(status);
   }
 
   @Transactional
@@ -53,13 +47,19 @@ public class TagServiceImpl implements TagService {
   @Transactional
   @Override
   public TagResponse createTag(@NonNull CreateTagRequest request) {
-    // check if already exist
     if (tagRepository.existsByNameIgnoreCase(request.name()))
       throw new AlreadyExistException("Tag", request.name());
 
     Tag tag = Tag.builder().name(request.name()).build();
-    return tagMapper.toResponse(tagRepository.save(tag));
+    Tag saved = tagRepository.save(tag);
+    return new TagResponse(saved.getId(), saved.getName(), 0L);
 
+  }
+
+  @Override
+  public PageResponse<TagResponse> getAllTags(Pageable pageable) {
+    Page<TagResponse> page = tagRepository.findAllWithPostCount(pageable);
+    return PageResponse.from(page);
   }
 
 }

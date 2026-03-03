@@ -1,8 +1,9 @@
 package com.sysc.bulag_faust.category.service;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
 import com.sysc.bulag_faust.category.mapper.CategoryMapper;
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
+import com.sysc.bulag_faust.core.response.PageResponse;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +28,9 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryMapper categoryMapper;
 
   @Override
-  public List<CategoryResponse> getAllCategoriesWithCounts() {
-    return categoryRepository.findAllWithPublishedPostCounts();
+  public PageResponse<CategoryResponse> getAllCategories(Pageable pageable) {
+    Page<CategoryResponse> page = categoryRepository.findAllWithPostCounts(pageable);
+    return PageResponse.from(page);
   }
 
   @Transactional

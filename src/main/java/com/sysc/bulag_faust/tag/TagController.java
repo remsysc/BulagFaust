@@ -1,8 +1,10 @@
 package com.sysc.bulag_faust.tag;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,11 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.core.response.ApiResponse;
-import com.sysc.bulag_faust.post.entity.PostStatus;
+import com.sysc.bulag_faust.core.response.PageResponse;
 import com.sysc.bulag_faust.tag.dto.CreateTagRequest;
 import com.sysc.bulag_faust.tag.dto.TagResponse;
 import com.sysc.bulag_faust.tag.service.TagService;
@@ -30,10 +31,10 @@ public class TagController {
   private final TagService tagService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<TagResponse>>> getAllTagsWithPublishedPost(
-      @RequestParam(required = false, defaultValue = "PUBLISHED") PostStatus status) {
-    List<TagResponse> tags = tagService.getAllTagsWithPostCount(status);
-    return ResponseEntity.status(200).body(ApiResponse.success("Retrieved all tags", tags));
+  public ResponseEntity<ApiResponse<PageResponse<TagResponse>>> getAllTags(
+      @PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
+    PageResponse<TagResponse> response = tagService.getAllTags(pageable);
+    return ResponseEntity.status(200).body(ApiResponse.success("Retrieved all tags", response));
   }
 
   @DeleteMapping("/{id}")
