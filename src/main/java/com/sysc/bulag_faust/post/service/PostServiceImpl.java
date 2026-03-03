@@ -133,6 +133,20 @@ public class PostServiceImpl implements PostService {
     return new HashSet<>(existing);
   }
 
+  @Transactional
+  @Override
+  public PostResponse deletePost(UUID postId, UUID authorId) {
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new NotFoundException("Post", postId));
+
+    if (!post.getAuthor().getId().equals(authorId)) {
+      throw new AccessDeniedException("You can only delete your own posts");
+    }
+
+    postRepository.delete(post);
+    return postMapper.toResponse(post);
+  }
+
   // TODO: add groupValidation
 
 }

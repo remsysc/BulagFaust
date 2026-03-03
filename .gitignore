@@ -35,3 +35,6 @@ build/
 ## added
 application-local.properties
 .env
+
+# Code Review
+CODE_REVIEW.md

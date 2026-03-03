@@ -18,4 +18,6 @@ public interface PostService {
   PostResponse createPost(CreatePostRequest request, UUID authorId);
 
   PostResponse updatePost(UpdatePostRequest request, UUID postId, UUID authorId);
+
+  PostResponse deletePost(UUID postId, UUID authorId);
 }
