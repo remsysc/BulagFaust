@@ -26,7 +26,14 @@ public class SecurityUserDetails implements UserDetails {
 
   public static SecurityUserDetails buildUserDetails(User user) {
     List<GrantedAuthority> authorities = user.getRoles()
-        .stream().map(role -> new SimpleGrantedAuthority(role.getName()))
+        .stream()
+        .map(role -> {
+          String roleName = role.getName();
+          // ensure role prefix
+          if (!roleName.startsWith("ROLE_"))
+            roleName = "ROLE_" + roleName;
+          return new SimpleGrantedAuthority(roleName);
+        })
         .collect(Collectors.toList());
 
     return new SecurityUserDetails(user.getId(), user.getEmail(), user.getPassword(),

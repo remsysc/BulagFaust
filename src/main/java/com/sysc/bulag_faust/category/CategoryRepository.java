@@ -5,11 +5,9 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.sysc.bulag_faust.category.dto.CategoryResponse;
-import com.sysc.bulag_faust.post.entity.PostStatus;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
@@ -26,10 +24,11 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
       COUNT(p)
       )
       FROM Category c
-      INNER JOIN c.posts p ON p.status = :status
+      LEFT JOIN c.posts p ON p.status = com.sysc.bulag_faust.post.entity.PostStatus.PUBLISHED
       GROUP BY c.id, c.name
+      ORDER BY c.name
       """)
-  List<CategoryResponse> findAllWithPublishedPostCounts(@Param("status") PostStatus status);
+  List<CategoryResponse> findAllWithPublishedPostCounts();
 
   boolean existsByNameIgnoreCase(String name);
 

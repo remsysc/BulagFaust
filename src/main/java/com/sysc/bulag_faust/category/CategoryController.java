@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
 import com.sysc.bulag_faust.category.service.CategoryService;
 import com.sysc.bulag_faust.core.response.ApiResponse;
-import com.sysc.bulag_faust.post.entity.PostStatus;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +30,9 @@ public class CategoryController {
   private final CategoryService categoryService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategoriesWithPublishedCount(
-      @RequestParam(required = false, defaultValue = "PUBLISHED") PostStatus status) {
+  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategoriesWithPublishedCount() {
 
-    List<CategoryResponse> category = categoryService.getAllCategoriesWithCounts(status);
+    List<CategoryResponse> category = categoryService.getAllCategoriesWithCounts();
 
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Categories retrieved", category));
   }

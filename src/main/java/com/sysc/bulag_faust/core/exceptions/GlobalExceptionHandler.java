@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
 
   // add spring exceptions
   // i.e. wrong paths etc
+  // .InvalidDataAccessApiUsageException
   @ExceptionHandler(HttpMessageNotReadableException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ApiErrorResponse handleMessageNotReadable(HttpMessageNotReadableException ex) {

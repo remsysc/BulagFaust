@@ -13,7 +13,6 @@ import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
 import com.sysc.bulag_faust.category.mapper.CategoryMapper;
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.exceptions.base_exception.NotFoundException;
-import com.sysc.bulag_faust.post.entity.PostStatus;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +26,8 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryMapper categoryMapper;
 
   @Override
-  public List<CategoryResponse> getAllCategoriesWithCounts(PostStatus status) {
-
-    return categoryRepository.findAllWithPublishedPostCounts(status);
-
+  public List<CategoryResponse> getAllCategoriesWithCounts() {
+    return categoryRepository.findAllWithPublishedPostCounts();
   }
 
   @Transactional
