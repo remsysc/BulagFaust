@@ -1,5 +1,7 @@
 package com.sysc.bulag_faust.auth.service;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +15,8 @@ import com.sysc.bulag_faust.auth.dto.SignUpRequest;
 import com.sysc.bulag_faust.core.exceptions.base_exception.AlreadyExistException;
 import com.sysc.bulag_faust.core.security.jwt.JwtUtils;
 import com.sysc.bulag_faust.core.security.user.SecurityUserDetails;
+import com.sysc.bulag_faust.role.Role;
+import com.sysc.bulag_faust.role.RoleRepository;
 import com.sysc.bulag_faust.user.User;
 import com.sysc.bulag_faust.user.UserRepository;
 
@@ -28,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtUtils jwtUtils;
+  private final RoleRepository roleRepository;
 
   @Value("${auth.token.expirationInMils}")
   private long expirationTime;
@@ -50,9 +55,17 @@ public class AuthServiceImpl implements AuthService {
     if (userRepository.existsByEmail(request.email())) {
       throw new AlreadyExistException("User", request.email());
     }
-    User user = User.builder().username(request.username()).email(request.email())
+
+    Role userRole = roleRepository.findByName("ROLE_USER")
+        .orElseThrow(() -> new IllegalStateException("ROLE_USER not found. Please restart application to seed roles."));
+
+    User user = User.builder()
+        .username(request.username())
+        .email(request.email())
         .password(passwordEncoder.encode(request.password()))
+        .roles(Set.of(userRole))
         .build();
+
     User saved = userRepository.save(user);
     SecurityUserDetails userDetails = SecurityUserDetails.buildUserDetails(saved);
     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,

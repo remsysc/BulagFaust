@@ -44,12 +44,28 @@ public class SecurityConfig {
             exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint).accessDeniedHandler(accessDeniedHandler))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authz -> authz
+            // Public endpoints
             .requestMatchers("/api/v1/auth/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll() // public reads
             .requestMatchers(HttpMethod.GET, "/api/v1/tags/**").permitAll() // public reads
-            .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
-            .requestMatchers("/api/v1/posts/**").authenticated() // writes require auth
-            .requestMatchers("/api/v1/admin/**").hasRole("ADMIN") // role-based
+            .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll() // public reads
+
+            // Category writes: ADMIN only
+            .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PATCH, "/api/v1/categories/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasRole("ADMIN")
+
+            // Tag writes: any authenticated user can create
+            .requestMatchers(HttpMethod.POST, "/api/v1/tags/**").authenticated()
+
+            // Post writes: any authenticated user can manage their own posts
+            .requestMatchers("/api/v1/posts/**").authenticated()
+
+            // Admin-only endpoints
+            .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+
+            // Everything else requires authentication
             .anyRequest().authenticated())
         .authenticationProvider(daoAuthenticationProvider)
         .addFilterBefore(authTokenFilter,
