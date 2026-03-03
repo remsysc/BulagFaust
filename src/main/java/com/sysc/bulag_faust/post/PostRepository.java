@@ -15,6 +15,19 @@ import com.sysc.bulag_faust.post.entity.Post;
 @Repository
 public interface PostRepository extends JpaRepository<Post, UUID> {
 
+  @Query("""
+      SELECT p FROM Post p
+      WHERE (p.status = com.sysc.bulag_faust.post.entity.PostStatus.PUBLISHED
+            OR (p.status = com.sysc.bulag_faust.post.entity.PostStatus.DRAFT AND p.author.id = :authorId))
+      AND (:categoryId IS NULL OR EXISTS (
+          SELECT 1 FROM p.categories c WHERE c.id = :categoryId))
+      AND (:tagId IS NULL OR EXISTS (
+          SELECT 1 FROM p.tags t WHERE t.id = :tagId))
+      """)
+  Page<Post> findAllVisibleToUser(@Param("authorId") UUID authorId,
+      @Param("categoryId") UUID categoryId,
+      @Param("tagId") UUID tagId, Pageable pageable);
+
   @Query(value = """
       SELECT p.id FROM Post p
       WHERE (:categoryId IS NULL OR EXISTS(

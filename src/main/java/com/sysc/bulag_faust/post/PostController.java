@@ -7,7 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +45,7 @@ public class PostController {
       @RequestParam(required = false) UUID tagId,
       @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-    Page<PostResponse> posts = postService.getAllPosts(categoryId, tagId, pageable);
+    Page<PostResponse> posts = postService.getAllPosts(categoryId, tagId, authUtils.getAuthenticateUserID(), pageable);
     return ResponseEntity.ok(ApiResponse.success("Retrieved all posts", PageResponse.from(posts)));
   }
 
@@ -59,13 +61,18 @@ public class PostController {
     return ResponseEntity.status(201).body(ApiResponse.success("Created a post", post));
   }
 
-  // TODO: add CRUD
-
   @PatchMapping("/{id}")
   public ResponseEntity<ApiResponse<PostResponse>> updatePost(@PathVariable UUID id,
       @Valid @RequestBody UpdatePostRequest request) {
     PostResponse response = postService.updatePost(request, id, authUtils.getAuthenticateUserID());
     return ResponseEntity.status(200).body(ApiResponse.success("Post updated", response));
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<ApiResponse<PostResponse>> deletePost(@PathVariable UUID id) {
+
+    PostResponse response = postService.deletePost(id, authUtils.getAuthenticateUserID());
+    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Post deleted", response));
   }
 
 }

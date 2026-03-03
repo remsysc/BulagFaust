@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import com.sysc.bulag_faust.post.entity.PostStatus;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UpdatePostRequest(

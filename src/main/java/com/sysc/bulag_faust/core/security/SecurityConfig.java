@@ -62,7 +62,7 @@ public class SecurityConfig {
   // creates a security context
   // every future request uses this context to verify access
   @Bean
-  public PasswordEncoder passWordEnconder() {
+  public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
@@ -74,8 +74,8 @@ public class SecurityConfig {
   @Bean
   DaoAuthenticationProvider authenticationProvider(SecurityUserDetailsService userDetailsService,
       PasswordEncoder passwordEncoder) {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-    provider.setHideUserNotFoundExceptions(false);// logs invalid user
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setUserDetailsService(userDetailsService);
     provider.setPasswordEncoder(passwordEncoder);
     return provider;
   }

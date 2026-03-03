@@ -11,11 +11,13 @@ import com.sysc.bulag_faust.post.dto.request.UpdatePostRequest;
 
 public interface PostService {
 
-  Page<PostResponse> getAllPosts(UUID categoryId, UUID tagId, Pageable pageable);
+  Page<PostResponse> getAllPosts(UUID categoryId, UUID tagId, UUID authorId, Pageable pageable);
 
   PostResponse getPostById(UUID id);
 
   PostResponse createPost(CreatePostRequest request, UUID authorId);
 
   PostResponse updatePost(UpdatePostRequest request, UUID postId, UUID authorId);
+
+  PostResponse deletePost(UUID postId, UUID authorId);
 }
