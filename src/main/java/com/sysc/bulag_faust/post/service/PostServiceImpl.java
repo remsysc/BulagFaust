@@ -45,12 +45,14 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public Page<PostResponse> getAllPosts(UUID categoryId, UUID tagId, UUID authorId, Pageable pageable) {
+    Page<UUID> idPage = postRepository.findPostIds(categoryId, tagId, pageable);
+
     Page<Post> postPage = postRepository.findAllVisibleToUser(authorId, categoryId, tagId, pageable);
 
     return new PageImpl<>(
         postMapper.toResponses(postPage.getContent()),
         pageable,
-        postPage.getTotalElements());
+        idPage.getTotalElements());
   }
 
   @Override

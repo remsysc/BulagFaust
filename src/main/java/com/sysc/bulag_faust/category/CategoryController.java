@@ -1,8 +1,10 @@
 package com.sysc.bulag_faust.category;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +20,7 @@ import com.sysc.bulag_faust.category.dto.CategoryResponse;
 import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
 import com.sysc.bulag_faust.category.service.CategoryService;
 import com.sysc.bulag_faust.core.response.ApiResponse;
+import com.sysc.bulag_faust.core.response.PageResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +33,10 @@ public class CategoryController {
   private final CategoryService categoryService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategoriesWithPublishedCount() {
+  public ResponseEntity<ApiResponse<PageResponse<CategoryResponse>>> getAllCategories(
+      @PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
 
-    List<CategoryResponse> category = categoryService.getAllCategoriesWithCounts();
+    PageResponse<CategoryResponse> category = categoryService.getAllCategories(pageable);
 
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Categories retrieved", category));
   }

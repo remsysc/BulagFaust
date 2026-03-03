@@ -11,5 +11,5 @@ import com.sysc.bulag_faust.category.dto.CreateCategoryRequest;
 public interface CategoryMapper {
   Category toEntity(CreateCategoryRequest request);
 
-  CategoryResponse toDto(Category category); // postCount will be 0 on create — see note below
+  CategoryResponse toDto(Category category);
 }
